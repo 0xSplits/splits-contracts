@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "no-loops",
+    "prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "latest"
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "no-loops/no-loops": 2,
+    "no-console": 1,
+    "prettier/prettier": 2
+  }
+}

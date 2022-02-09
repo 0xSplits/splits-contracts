@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.4;
+
+import 'ds-test/test.sol';
+import './SplitMain.sol';
+
+contract SplitMainTest is DSTest {
+    SplitMain splitMain;
+
+    function setUp() public {
+        splitMain = new SplitMain();
+    }
+
+    function test_createSplit(
+                              address[] calldata accounts,
+                              uint32[] calldata percentAllocations,
+                              uint32 distributionFee
+                              ) public {
+        splitMain.createSplit(accounts, percentAllocations, distributionFee);
+        assertTrue(true);
+    }
+
+    function test_receiveETH(
+                              address[] calldata accounts,
+                              uint32[] calldata percentAllocations,
+                              uint32 distributionFee,
+                              uint256 amount
+                              ) public {
+        address split = splitMain.createSplit(accounts, percentAllocations, distributionFee);
+        payable( split ).transfer(amount);
+        assertEq(split.balance, amount);
+    }
+
+}
