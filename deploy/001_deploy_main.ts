@@ -5,12 +5,13 @@ import fs from 'fs'
 
 import { Dictionary } from 'lodash'
 
-const HARDHAT = 31337;
+const LOCALHOST_CHAIN = 1337
+const HARDHAT_CHAIN = 31337
 
 const NETWORK_MAP: Dictionary<string> = {
   '1': 'mainnet',
   '3': 'ropsten',
-  '1337': 'hardhat',
+  '1337': 'localhost',
   '31337': 'hardhat',
 }
 
@@ -44,7 +45,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     JSON.stringify(info, null, 2),
   )
 
-  if (chainId === HARDHAT) {
+  if (chainId === HARDHAT_CHAIN || chainId === LOCALHOST_CHAIN) {
     const multicall = await deploy('Multicall2', {
       from: deployer,
       log: true,
