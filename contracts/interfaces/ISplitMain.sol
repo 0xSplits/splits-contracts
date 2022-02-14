@@ -17,21 +17,21 @@ interface ISplitMain {
   function createSplit(
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee,
+    uint32 distributorFee,
     address controller
   ) external returns (address);
 
   function predictImmutableSplitAddress(
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   ) external view returns (address);
 
   function updateSplit(
     address split,
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   ) external;
 
   function transferControl(address split, address newController) external;
@@ -46,8 +46,16 @@ interface ISplitMain {
     address split,
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee,
-    address distributionAddress
+    uint32 distributorFee,
+    address distributorAddress
+  ) external;
+
+  function updateAndDistributeETH(
+    address split,
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
   ) external;
 
   function distributeERC20(
@@ -55,13 +63,22 @@ interface ISplitMain {
     ERC20 token,
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee,
-    address distributionAddress
+    uint32 distributorFee,
+    address distributorAddress
+  ) external;
+
+  function updateAndDistributeERC20(
+    address split,
+    ERC20 token,
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
   ) external;
 
   function withdraw(
     address account,
-    bool eth,
+    uint256 withdrawETH,
     ERC20[] calldata tokens
   ) external;
 
@@ -107,38 +124,37 @@ interface ISplitMain {
   /** @notice emitted after each successful ETH balance split
    *  @param split Address of the split that distributed its balance
    *  @param amount Amount of ETH distributed
-   *  @param distributionAddress Address to credit distribution fee to
+   *  @param distributorAddress Address to credit distributor fee to
    */
   event DistributeETH(
     address indexed split,
     uint256 amount,
-    address indexed distributionAddress
+    address indexed distributorAddress
   );
 
   /** @notice emitted after each successful ERC20 balance split
    *  @param split Address of the split that distributed its balance
    *  @param token Address of ERC20 distributed
    *  @param amount Amount of ERC20 distributed
-   *  @param distributionAddress Address to credit distribution fee to
+   *  @param distributorAddress Address to credit distributor fee to
    */
   event DistributeERC20(
     address indexed split,
     ERC20 indexed token,
     uint256 amount,
-    address indexed distributionAddress
+    address indexed distributorAddress
   );
 
   /** @notice emitted after each successful withdrawal
    *  @param account Address that funds were withdrawn to
-   *  @param eth Boolean for whether ETH was distributed
-   *  @param tokens Addresses of ERC20s distributed
-   *  @param amounts Amounts of ETH/ERC20 distributed (if ETH was distributed (`eth`),
-   *  will be first in the array Remaining array matches order of `tokens`)
+   *  @param ethAmount Amount of ETH withdrawn
+   *  @param tokens Addresses of ERC20s withdrawn
+   *  @param tokenAmounts Amounts of corresponding ERC20s withdrawn
    */
   event Withdrawal(
     address indexed account,
-    bool eth,
+    uint256 ethAmount,
     ERC20[] tokens,
-    uint256[] amounts
+    uint256[] tokenAmounts
   );
 }

@@ -22,13 +22,18 @@ const DAI_WHALE = ethers.utils.getAddress(
   '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
 )
 
+const ETH_BALANCES_SLOT = 0
+const ERC20_BALANCES_SLOT = 1
+
 type CustomTestConfig = Partial<{
   accounts: string[]
   percentAllocations: number[]
-  distributionFee: number
+  distributorFee: number
   controller: string
-  deposit: BigNumber
-  erc20Deposit: BigNumber
+  ethProxyBalance: BigNumber
+  ethMainBalance: BigNumber
+  erc20ProxyBalance: BigNumber
+  erc20MainBalance: BigNumber
 }>
 
 describe('SplitMain', function () {
@@ -41,14 +46,18 @@ describe('SplitMain', function () {
   let splitWallet: SplitWallet
   let accounts: string[]
   let percentAllocations: number[]
-  let distributionFee: number
+  let distributorFee: number
   let controller: string
   let newPotentialController: string
   let splitAddress: string
-  let deposit: BigNumber
+  let ethProxyBalance: BigNumber
+  let ethMainBalance: BigNumber
+  let ethBalance: BigNumber
   let erc20Whale: Signer
   let erc20Contract: Contract
-  let erc20Deposit: BigNumber
+  let erc20ProxyBalance: BigNumber
+  let erc20MainBalance: BigNumber
+  let erc20Balance: BigNumber
 
   let createSplitTx: Promise<ContractTransaction>
   let predictedSplitAddress: string
@@ -71,11 +80,13 @@ describe('SplitMain', function () {
         account,
         accounts,
         percentAllocations,
-        distributionFee,
+        distributorFee,
         controller,
         splitAddress,
-        deposit,
-        erc20Deposit,
+        ethProxyBalance,
+        erc20ProxyBalance,
+        erc20MainBalance,
+        erc20Balance,
       })
   })
 
@@ -97,8 +108,8 @@ describe('SplitMain', function () {
       )
     percentAllocations =
       customConfig?.percentAllocations ?? getRandomAllocations(accounts.length)
-    distributionFee =
-      customConfig.distributionFee ??
+    distributorFee =
+      customConfig.distributorFee ??
       Math.max(round((PERCENTAGE_SCALE.toNumber() / 10) * Math.random()), 1)
     controller =
       customConfig.controller ?? getRandomItem(allAccounts.concat(AddressZero))
@@ -119,7 +130,7 @@ describe('SplitMain', function () {
       await loadFixture(testSetup__deploy(customConfig))
       createSplitTx = splitMain
         .connect(signer)
-        .createSplit(accounts, percentAllocations, distributionFee, controller)
+        .createSplit(accounts, percentAllocations, distributorFee, controller)
       const receipt = await (await createSplitTx).wait()
       splitAddress =
         receipt.events?.[0]?.args?.split &&
@@ -142,26 +153,44 @@ describe('SplitMain', function () {
     (customConfig: CustomTestConfig = {}) =>
     async () => {
       await loadFixture(testSetup__createSplit(customConfig))
-      deposit =
-        customConfig.deposit ??
+      ethProxyBalance =
+        customConfig.ethProxyBalance ??
         ethers.utils.parseEther((10 * Math.random()).toFixed(18)).add(One)
+      ethMainBalance =
+        customConfig.ethMainBalance ??
+        ethers.utils.parseEther((10 * Math.random()).toFixed(18)).add(One)
+      ethBalance = ethMainBalance.add(ethProxyBalance)
       await signer.sendTransaction({
         to: splitAddress,
-        value: deposit,
+        value: ethProxyBalance,
+      })
+      const index = ethers.utils.solidityKeccak256(
+        ['uint256', 'uint256'],
+        [splitAddress, ETH_BALANCES_SLOT], // key, slot
+      )
+      await network.provider.request({
+        method: 'hardhat_setStorageAt',
+        params: [
+          splitMain.address,
+          ethers.utils.hexStripZeros(index),
+          ethers.utils.hexZeroPad(ethMainBalance.toHexString(), 32),
+        ],
       })
     }
 
   const testSetup__depositAndSplitETH =
     (customConfig: CustomTestConfig = {}) =>
     async () => {
-      await loadFixture(testSetup__depositETHToSplit(customConfig))
+      await loadFixture(
+        testSetup__depositETHToSplit({ ...customConfig, ethMainBalance: Zero }),
+      )
       await splitMain
         .connect(signer)
         .distributeETH(
           splitAddress,
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
           account,
         )
     }
@@ -190,18 +219,45 @@ describe('SplitMain', function () {
     async () => {
       await loadFixture(testSetup__createSplit(customConfig))
       await loadFixture(testSetup__mockERC20())
-      erc20Deposit =
-        customConfig.erc20Deposit ??
-        ethers.utils.parseEther((100 * Math.random()).toFixed(18)).add(Two)
+      erc20ProxyBalance =
+        customConfig.erc20ProxyBalance ??
+        ethers.utils.parseEther((10 * Math.random()).toFixed(18)).add(One)
+      erc20MainBalance =
+        customConfig.erc20MainBalance ??
+        ethers.utils.parseEther((10 * Math.random()).toFixed(18)).add(One)
+      erc20Balance = erc20ProxyBalance.add(erc20MainBalance)
       await erc20Contract
         .connect(erc20Whale)
-        .transfer(splitAddress, erc20Deposit)
+        .transfer(splitAddress, erc20ProxyBalance)
+      const index = ethers.utils.solidityKeccak256(
+        ['uint256', 'bytes32'],
+        [
+          splitAddress,
+          ethers.utils.solidityKeccak256(
+            ['uint256', 'uint256'],
+            [DAI_ADDRESS, ERC20_BALANCES_SLOT], // key, slot
+          ),
+        ], // key, slot
+      )
+      await network.provider.request({
+        method: 'hardhat_setStorageAt',
+        params: [
+          splitMain.address,
+          ethers.utils.hexStripZeros(index),
+          ethers.utils.hexZeroPad(erc20MainBalance.toHexString(), 32),
+        ],
+      })
     }
 
   const testSetup__depositAndSplitERC20 =
     (customConfig: CustomTestConfig = {}) =>
     async () => {
-      await loadFixture(testSetup__depositERC20ToSplit(customConfig))
+      await loadFixture(
+        testSetup__depositERC20ToSplit({
+          ...customConfig,
+          erc20MainBalance: Zero,
+        }),
+      )
       await splitMain
         .connect(signer)
         .distributeERC20(
@@ -209,7 +265,7 @@ describe('SplitMain', function () {
           erc20Contract.address,
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
           account,
         )
     }
@@ -309,10 +365,52 @@ describe('SplitMain', function () {
         await expect(expectCB()).to.be.reverted
       })
 
-      it('Should revert if distributionFee is above 10%', async function () {
-        distributionFee = PERCENTAGE_SCALE.div(10).toNumber() + 1
+      it('Should revert if distributorFee is above 10%', async function () {
+        distributorFee = PERCENTAGE_SCALE.div(10).toNumber() + 1
         await expect(expectCB()).to.be.revertedWith(
-          `InvalidSplit__InvalidDistributionFee(${distributionFee})`,
+          `InvalidSplit__InvalidDistributorFee(${distributorFee})`,
+        )
+      })
+    })
+  }
+
+  const testBase__updateSplit = ({
+    beforeEachCB,
+    expectCB,
+  }: {
+    beforeEachCB?: () => Promise<void>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expectCB: (signer_?: Signer) => Promise<any>
+  }) => {
+    describe('UpdateSplit', function () {
+      beforeEachCB && beforeEach(beforeEachCB)
+
+      it('Should emit UpdateSplit event with expected split address', async function () {
+        await expect(expectCB())
+          .to.emit(splitMain, 'UpdateSplit')
+          .withArgs(splitAddress)
+      })
+
+      it('Correctly updates the hash', async function () {
+        generateRandomSplit({ controller })
+        await expectCB()
+        const hash = await splitMain.getHash(splitAddress)
+        const expectedHash = hashSplit(
+          accounts,
+          percentAllocations,
+          distributorFee,
+        )
+        expect(hash).to.equal(expectedHash)
+      })
+
+      it('Should revert if a non-controller sends tx', async function () {
+        let newAccount: string
+        do {
+          newAccount = getRandomItem(allAccounts)
+        } while (newAccount === account)
+        const newSigner = await ethers.getSigner(newAccount)
+        await expect(expectCB(newSigner)).to.be.revertedWith(
+          `Unauthorized("${newAccount}")`,
         )
       })
     })
@@ -328,15 +426,15 @@ describe('SplitMain', function () {
     })
 
     it('Should be able to receive ETH', async function () {
-      deposit = ethers.utils.parseEther(Math.random().toFixed(18))
+      ethProxyBalance = ethers.utils.parseEther(Math.random().toFixed(18))
       await expect(() =>
         signer.sendTransaction({
           to: splitMain.address,
-          value: deposit,
+          value: ethProxyBalance,
         }),
       ).to.changeEtherBalances(
         [signer, addressProvider(splitMain.address)],
-        [deposit.mul(-1), deposit],
+        [ethProxyBalance.mul(-1), ethProxyBalance],
       )
     })
   })
@@ -347,7 +445,7 @@ describe('SplitMain', function () {
         await loadFixture(testSetup__createSplit({ controller: acc }))
       })
 
-      it('Should emit a CreateSplit event with expected args', async function () {
+      it('Should emit CreateSplit event with expected args', async function () {
         await expect(createSplitTx)
           .to.emit(splitMain, 'CreateSplit')
           .withArgs(splitAddress)
@@ -359,7 +457,7 @@ describe('SplitMain', function () {
             splitMain.createSplit(
               accounts,
               percentAllocations,
-              distributionFee,
+              distributorFee,
               controller,
             ),
           ).to.be.revertedWith('Create2Error()')
@@ -370,7 +468,7 @@ describe('SplitMain', function () {
             splitMain.createSplit(
               accounts,
               percentAllocations,
-              distributionFee,
+              distributorFee,
               controller,
             ),
           ).to.not.be.reverted
@@ -381,7 +479,7 @@ describe('SplitMain', function () {
         const expectedHash = hashSplit(
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
         )
         expect(hash).to.equal(expectedHash)
       })
@@ -414,7 +512,7 @@ describe('SplitMain', function () {
         splitMain.createSplit(
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
           controller,
         ),
     })
@@ -430,7 +528,7 @@ describe('SplitMain', function () {
         predictedSplitAddress = await splitMain.predictImmutableSplitAddress(
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
         )
         expect(predictedSplitAddress).to.equal(splitAddress)
       })
@@ -448,7 +546,7 @@ describe('SplitMain', function () {
         splitMain.predictImmutableSplitAddress(
           accounts,
           percentAllocations,
-          distributionFee,
+          distributorFee,
         ),
     })
   })
@@ -464,43 +562,19 @@ describe('SplitMain', function () {
             splitAddress,
             accounts,
             percentAllocations,
-            distributionFee,
+            distributorFee,
           )
     })
 
-    describe('base', function () {
-      beforeEach(async () => {
-        await loadFixture(testSetup__createSplit({ controller: account }))
-      })
-
-      it('Should emit an UpdateSplit event with expected split address', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'UpdateSplit')
-          .withArgs(splitAddress)
-      })
-
-      it('Correctly updates the hash', async function () {
-        generateRandomSplit({ controller })
-        await tx()
-        const hash = await splitMain.getHash(splitAddress)
-        const expectedHash = hashSplit(
-          accounts,
-          percentAllocations,
-          distributionFee,
+    testBase__updateSplit({
+      beforeEachCB: async () => {
+        await loadFixture(
+          testSetup__createSplit({
+            controller: account,
+          }),
         )
-        expect(hash).to.equal(expectedHash)
-      })
-
-      it('Should revert if a non-controller sends tx', async function () {
-        let newAccount: string
-        do {
-          newAccount = getRandomItem(allAccounts)
-        } while (newAccount === account)
-        const newSigner = await ethers.getSigner(newAccount)
-        await expect(tx(newSigner)).to.be.revertedWith(
-          `Unauthorized("${newAccount}")`,
-        )
-      })
+      },
+      expectCB: (signer_) => tx(signer_),
     })
 
     testModifier__validSplit({
@@ -612,7 +686,7 @@ describe('SplitMain', function () {
       )
     })
 
-    it('Should emit a ControlTransfer event with the expected splitAddress, previousController, and newController', async function () {
+    it('Should emit ControlTransfer event with the expected splitAddress, previousController, and newController', async function () {
       await expect(tx())
         .to.emit(splitMain, 'ControlTransfer')
         .withArgs(splitAddress, controller, newPotentialController)
@@ -655,7 +729,7 @@ describe('SplitMain', function () {
       await loadFixture(testSetup__createSplit({ controller: account }))
     })
 
-    it('Should emit a ControlTransfer event with the expected splitAddress, previousController, and newController', async function () {
+    it('Should emit ControlTransfer event with the expected splitAddress, previousController, and newController', async function () {
       await expect(tx())
         .to.emit(splitMain, 'ControlTransfer')
         .withArgs(splitAddress, controller, AddressZero)
@@ -704,23 +778,43 @@ describe('SplitMain', function () {
             splitAddress,
             accounts,
             percentAllocations,
-            distributionFee,
+            distributorFee,
             account,
           )
     })
 
-    describe('Proxy balance = 0', function () {
+    describe('Proxy balance = 0 & SplitMain balance = 0', function () {
       beforeEach(async () => {
         await loadFixture(testSetup__createSplit({ controller: account }))
       })
 
-      it('Should revert', async function () {
-        await expect(tx()).to.be.reverted
+      it('Should emit DistributeETH event with the expected args', async function () {
+        await expect(tx())
+          .to.emit(splitMain, 'DistributeETH')
+          .withArgs(splitAddress, Zero, account)
       })
     })
 
-    describe('Proxy balance > 0', function () {
-      describe('DistributionFee > 0', function () {
+    describe('Proxy balance = 0 & SplitMain balance = 1', function () {
+      beforeEach(async () => {
+        await loadFixture(
+          testSetup__depositETHToSplit({
+            controller: account,
+            ethProxyBalance: Zero,
+            ethMainBalance: One,
+          }),
+        )
+      })
+
+      it('Should emit DistributeETH event with the expected args', async function () {
+        await expect(tx())
+          .to.emit(splitMain, 'DistributeETH')
+          .withArgs(splitAddress, Zero, account)
+      })
+    })
+
+    describe('Proxy balance > 1 & SplitMain balance > 1', function () {
+      describe('DistributorFee > 0', function () {
         beforeEach(async () => {
           await loadFixture(
             testSetup__depositETHToSplit({ controller: account }),
@@ -730,14 +824,14 @@ describe('SplitMain', function () {
         it('Should send ETH to SplitMain', async function () {
           await expect(tx).to.changeEtherBalances(
             [addressProvider(splitAddress), addressProvider(splitMain.address)],
-            [deposit.mul(-1), deposit],
+            [ethProxyBalance.mul(-1), ethProxyBalance],
           )
         })
 
-        it('Should emit a DistributeETHFor event with the expected args', async function () {
+        it('Should emit DistributeETH event with the expected args', async function () {
           await expect(tx())
             .to.emit(splitMain, 'DistributeETH')
-            .withArgs(splitAddress, deposit.sub(One), account)
+            .withArgs(splitAddress, ethBalance.sub(One), account)
         })
 
         it("Shouldn't leak funds", async function () {
@@ -754,13 +848,15 @@ describe('SplitMain', function () {
           // number may be off by a few wei due to rounding
           // closeTo not currently working
           // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
-          expect(postSplitTotal).to.be.lte(deposit)
-          expect(postSplitTotal).to.be.gte(deposit.sub(accounts.length))
+          expect(postSplitTotal).to.be.lte(ethBalance.sub(One))
+          expect(postSplitTotal).to.be.gte(
+            ethBalance.sub(One).sub(accounts.length),
+          )
         })
 
         it('Should check for a valid split hash', async function () {
           generateRandomSplit({ controller })
-          const hash = hashSplit(accounts, percentAllocations, distributionFee)
+          const hash = hashSplit(accounts, percentAllocations, distributorFee)
           await expect(tx()).to.be.revertedWith(
             `InvalidSplit__InvalidHash("${hash}")`,
           )
@@ -772,11 +868,11 @@ describe('SplitMain', function () {
         })
       })
 
-      describe('DistributionFee = 0', function () {
+      describe('DistributorFee = 0', function () {
         beforeEach(async () => {
           await loadFixture(
             testSetup__depositETHToSplit({
-              distributionFee: 0,
+              distributorFee: 0,
               controller: account,
             }),
           )
@@ -794,10 +890,151 @@ describe('SplitMain', function () {
           // number may be off by a few wei due to rounding
           // closeTo not currently working
           // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
-          expect(postSplitTotal).to.be.lte(deposit)
-          expect(postSplitTotal).to.be.gte(deposit.sub(accounts.length))
+          expect(postSplitTotal).to.be.lte(ethBalance.sub(One))
+          expect(postSplitTotal).to.be.gte(
+            ethBalance.sub(One).sub(accounts.length),
+          )
         })
       })
+    })
+  })
+
+  describe('updateAndDistributeETH', function () {
+    let tx: (signer_?: Signer) => Promise<ContractTransaction>
+
+    before(() => {
+      tx = (signer_: Signer = signer) =>
+        splitMain
+          .connect(signer_)
+          .updateAndDistributeETH(
+            splitAddress,
+            accounts,
+            percentAllocations,
+            distributorFee,
+            account,
+          )
+    })
+
+    beforeEach(async () => {
+      await loadFixture(testSetup__depositETHToSplit({ controller: account }))
+      generateRandomSplit({ controller })
+    })
+
+    testBase__updateSplit({
+      // beforeEach already set in block
+      expectCB: (signer_) => tx(signer_),
+    })
+
+    describe('distributeETH', function () {
+      describe('Proxy balance = 0 & SplitMain balance = 0', function () {
+        beforeEach(async () => {
+          await loadFixture(testSetup__createSplit({ controller: account }))
+        })
+
+        it('Should emit DistributeETH event with the expected args', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
+      })
+
+      describe('Proxy balance = 0 & SplitMain balance = 1', function () {
+        beforeEach(async () => {
+          await loadFixture(
+            testSetup__depositETHToSplit({
+              controller: account,
+              ethProxyBalance: Zero,
+              ethMainBalance: One,
+            }),
+          )
+        })
+
+        it('Should emit DistributeETH event with the expected args', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
+      })
+
+      describe('Proxy balance > 1 & SplitMain balance > 1', function () {
+        describe('DistributorFee > 0', function () {
+          beforeEach(async () => {
+            await loadFixture(
+              testSetup__depositETHToSplit({ controller: account }),
+            )
+          })
+
+          it('Should send ETH to SplitMain', async function () {
+            await expect(tx).to.changeEtherBalances(
+              [
+                addressProvider(splitAddress),
+                addressProvider(splitMain.address),
+              ],
+              [ethProxyBalance.mul(-1), ethProxyBalance],
+            )
+          })
+
+          it('Should emit DistributeETH event with the expected args', async function () {
+            await expect(tx())
+              .to.emit(splitMain, 'DistributeETH')
+              .withArgs(splitAddress, ethBalance.sub(One), account)
+          })
+
+          it("Shouldn't leak funds", async function () {
+            await tx()
+            const postDistributeETHs = await Promise.all(
+              uniq(accounts.concat(account)).map((acc) =>
+                splitMain.getETHBalance(acc),
+              ),
+            )
+            const postSplitTotal = postDistributeETHs.reduce(
+              (acc, bn) => acc.add(bn),
+              Zero,
+            )
+            // number may be off by a few wei due to rounding
+            // closeTo not currently working
+            // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
+            expect(postSplitTotal).to.be.lte(ethBalance.sub(One))
+            expect(postSplitTotal).to.be.gte(
+              ethBalance.sub(One).sub(accounts.length),
+            )
+          })
+        })
+
+        describe('DistributorFee = 0', function () {
+          beforeEach(async () => {
+            await loadFixture(
+              testSetup__depositETHToSplit({
+                distributorFee: 0,
+                controller: account,
+              }),
+            )
+          })
+
+          it("Shouldn't leak funds", async function () {
+            await tx()
+            const postDistributeETHs = await Promise.all(
+              accounts.map((acc) => splitMain.getETHBalance(acc)),
+            )
+            const postSplitTotal = postDistributeETHs.reduce(
+              (acc, bn) => acc.add(bn),
+              Zero,
+            )
+            // number may be off by a few wei due to rounding
+            // closeTo not currently working
+            // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
+            expect(postSplitTotal).to.be.lte(ethBalance.sub(One))
+            expect(postSplitTotal).to.be.gte(
+              ethBalance.sub(One).sub(accounts.length),
+            )
+          })
+        })
+      })
+    })
+
+    testModifier__validSplit({
+      // beforeEach already set in block
+      expectCB: () => tx(),
     })
   })
 
@@ -813,7 +1050,7 @@ describe('SplitMain', function () {
             erc20Contract.address,
             accounts,
             percentAllocations,
-            distributionFee,
+            distributorFee,
             account,
           )
     })
@@ -823,13 +1060,16 @@ describe('SplitMain', function () {
         await loadFixture(
           testSetup__depositERC20ToSplit({
             controller: account,
-            erc20Deposit: Zero,
+            erc20ProxyBalance: Zero,
+            erc20MainBalance: Zero,
           }),
         )
       })
 
-      it('Should revert', async function () {
-        await expect(tx()).to.be.reverted
+      it('Should emit DistributeERC20 event with the expected args', async function () {
+        await expect(tx())
+          .to.emit(splitMain, 'DistributeERC20')
+          .withArgs(splitAddress, erc20Contract.address, Zero, account)
       })
     })
 
@@ -838,40 +1078,60 @@ describe('SplitMain', function () {
         await loadFixture(
           testSetup__depositERC20ToSplit({
             controller: account,
-            erc20Deposit: One,
+            erc20ProxyBalance: One,
+            erc20MainBalance: Zero,
           }),
         )
       })
 
-      it('Should revert', async function () {
-        await expect(tx()).to.be.reverted
+      it('Should emit DistributeERC20 event with the expected args', async function () {
+        await expect(tx())
+          .to.emit(splitMain, 'DistributeERC20')
+          .withArgs(splitAddress, erc20Contract.address, Zero, account)
       })
     })
 
-    describe('Proxy balance > 1', function () {
-      describe('DistributionFee > 0', function () {
+    describe('Proxy balance = 0 & SplitMain balance = 1', function () {
+      beforeEach(async () => {
+        await loadFixture(
+          testSetup__depositERC20ToSplit({
+            controller: account,
+            erc20ProxyBalance: Zero,
+            erc20MainBalance: One,
+          }),
+        )
+      })
+
+      it('Should emit DistributeERC20 event with the expected args', async function () {
+        await expect(tx())
+          .to.emit(splitMain, 'DistributeERC20')
+          .withArgs(splitAddress, erc20Contract.address, Zero, account)
+      })
+    })
+
+    describe('Proxy balance > 1 & SplitMain balance > 1', function () {
+      describe('DistributorFee > 0', function () {
         beforeEach(async () => {
           await loadFixture(
             testSetup__depositERC20ToSplit({ controller: account }),
           )
-          erc20Deposit = erc20Deposit.sub(One)
         })
 
         it('Should send ERC20 to SplitMain when balance > 1', async function () {
           await expect(tx).to.changeTokenBalances(
             erc20Contract,
             [addressProvider(splitAddress), addressProvider(splitMain.address)],
-            [erc20Deposit.mul(-1), erc20Deposit],
+            [erc20ProxyBalance.sub(One).mul(-1), erc20ProxyBalance.sub(One)],
           )
         })
 
-        it('Should emit a DistributeERC20 event with the expected args', async function () {
+        it('Should emit DistributeERC20 event with the expected args', async function () {
           await expect(tx())
             .to.emit(splitMain, 'DistributeERC20')
             .withArgs(
               splitAddress,
               erc20Contract.address,
-              erc20Deposit.sub(One),
+              erc20Balance.sub(Two),
               account,
             )
         })
@@ -890,13 +1150,15 @@ describe('SplitMain', function () {
           // number may be off by a few wei due to rounding
           // closeTo not currently working
           // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
-          expect(postSplitTotal).to.be.lte(erc20Deposit)
-          expect(postSplitTotal).to.be.gte(erc20Deposit.sub(accounts.length))
+          expect(postSplitTotal).to.be.lte(erc20Balance.sub(Two))
+          expect(postSplitTotal).to.be.gte(
+            erc20Balance.sub(Two).sub(accounts.length),
+          )
         })
 
         it('Should check for a valid split hash', async function () {
           generateRandomSplit({ controller })
-          const hash = hashSplit(accounts, percentAllocations, distributionFee)
+          const hash = hashSplit(accounts, percentAllocations, distributorFee)
           await expect(tx()).to.be.revertedWith(
             `InvalidSplit__InvalidHash("${hash}")`,
           )
@@ -908,15 +1170,14 @@ describe('SplitMain', function () {
         })
       })
 
-      describe('DistributionFee = 0', function () {
+      describe('DistributorFee = 0', function () {
         beforeEach(async () => {
           await loadFixture(
             testSetup__depositERC20ToSplit({
-              distributionFee: 0,
+              distributorFee: 0,
               controller: account,
             }),
           )
-          erc20Deposit = erc20Deposit.sub(One)
         })
 
         it("Shouldn't leak funds", async function () {
@@ -933,10 +1194,188 @@ describe('SplitMain', function () {
           // number may be off by a few wei due to rounding
           // closeTo not currently working
           // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
-          expect(postSplitTotal).to.be.lte(erc20Deposit)
-          expect(postSplitTotal).to.be.gte(erc20Deposit.sub(accounts.length))
+          expect(postSplitTotal).to.be.lte(erc20Balance.sub(Two))
+          expect(postSplitTotal).to.be.gte(
+            erc20Balance.sub(Two).sub(accounts.length),
+          )
         })
       })
+    })
+  })
+
+  describe('updateAndDistributeERC20', function () {
+    let tx: (signer_?: Signer) => Promise<ContractTransaction>
+
+    before(() => {
+      tx = (signer_: Signer = signer) =>
+        splitMain
+          .connect(signer_)
+          .updateAndDistributeERC20(
+            splitAddress,
+            erc20Contract.address,
+            accounts,
+            percentAllocations,
+            distributorFee,
+            account,
+          )
+    })
+
+    beforeEach(async () => {
+      await loadFixture(
+        testSetup__depositERC20ToSplit({
+          controller: account,
+        }),
+      )
+      generateRandomSplit({ controller })
+    })
+
+    testBase__updateSplit({
+      // beforeEach already set in block
+      expectCB: (signer_) => tx(signer_),
+    })
+
+    describe('distributeERC20', function () {
+      describe('Proxy & SplitMain balances = 0', function () {
+        beforeEach(async () => {
+          await loadFixture(
+            testSetup__depositERC20ToSplit({
+              controller: account,
+              erc20ProxyBalance: Zero,
+              erc20MainBalance: Zero,
+            }),
+          )
+        })
+
+        it('Should emit DistributeERC20 event with the expected args', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+      })
+
+      describe('Proxy balance = 1 & SplitMain balance = 0', function () {
+        beforeEach(async () => {
+          await loadFixture(
+            testSetup__depositERC20ToSplit({
+              controller: account,
+              erc20ProxyBalance: One,
+              erc20MainBalance: Zero,
+            }),
+          )
+        })
+
+        it('Should emit DistributeERC20 event with the expected args', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+      })
+
+      describe('Proxy balance = 0 & SplitMain balance = 1', function () {
+        beforeEach(async () => {
+          await loadFixture(
+            testSetup__depositERC20ToSplit({
+              controller: account,
+              erc20ProxyBalance: Zero,
+              erc20MainBalance: One,
+            }),
+          )
+        })
+
+        it('Should emit DistributeERC20 event with the expected args', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+      })
+
+      describe('Proxy balance > 1 & SplitMain balance > 1', function () {
+        describe('DistributorFee > 0', function () {
+          beforeEach(async () => {
+            await loadFixture(
+              testSetup__depositERC20ToSplit({ controller: account }),
+            )
+          })
+
+          it('Should send ERC20 to SplitMain when balance > 1', async function () {
+            await expect(tx).to.changeTokenBalances(
+              erc20Contract,
+              [
+                addressProvider(splitAddress),
+                addressProvider(splitMain.address),
+              ],
+              [erc20ProxyBalance.sub(One).mul(-1), erc20ProxyBalance.sub(One)],
+            )
+          })
+
+          it('Should emit DistributeERC20 event with the expected args', async function () {
+            await expect(tx())
+              .to.emit(splitMain, 'DistributeERC20')
+              .withArgs(
+                splitAddress,
+                erc20Contract.address,
+                erc20Balance.sub(Two),
+                account,
+              )
+          })
+
+          it("Shouldn't leak funds", async function () {
+            await tx()
+            const postDistributeETHs = await Promise.all(
+              uniq(accounts.concat(account)).map((acc) =>
+                splitMain.getERC20Balance(acc, erc20Contract.address),
+              ),
+            )
+            const postSplitTotal = postDistributeETHs.reduce(
+              (acc, bn) => acc.add(bn),
+              Zero,
+            )
+            // number may be off by a few wei due to rounding
+            // closeTo not currently working
+            // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
+            expect(postSplitTotal).to.be.lte(erc20Balance.sub(Two))
+            expect(postSplitTotal).to.be.gte(
+              erc20Balance.sub(Two).sub(accounts.length),
+            )
+          })
+        })
+
+        describe('DistributorFee = 0', function () {
+          beforeEach(async () => {
+            await loadFixture(
+              testSetup__depositERC20ToSplit({
+                distributorFee: 0,
+                controller: account,
+              }),
+            )
+          })
+
+          it("Shouldn't leak funds", async function () {
+            await tx()
+            const postDistributeETHs = await Promise.all(
+              accounts.map((acc) =>
+                splitMain.getERC20Balance(acc, erc20Contract.address),
+              ),
+            )
+            const postSplitTotal = postDistributeETHs.reduce(
+              (acc, bn) => acc.add(bn),
+              Zero,
+            )
+            // number may be off by a few wei due to rounding
+            // closeTo not currently working
+            // expect(postSplitTotal).to.be.closeTo(deposit, accounts.length)
+            expect(postSplitTotal).to.be.lte(erc20Balance.sub(Two))
+            expect(postSplitTotal).to.be.gte(
+              erc20Balance.sub(Two).sub(accounts.length),
+            )
+          })
+        })
+      })
+    })
+
+    testModifier__validSplit({
+      // beforeEach already set in block
+      expectCB: () => tx(),
     })
   })
 
@@ -962,7 +1401,7 @@ describe('SplitMain', function () {
       } = {}) =>
         splitMain
           .connect(signer_)
-          .withdraw(account_, eth, erc20 ? [erc20Contract.address] : [])
+          .withdraw(account_, +eth, erc20 ? [erc20Contract.address] : [])
     })
 
     it('Should send ETH to account', async function () {
@@ -1031,10 +1470,12 @@ describe('SplitMain', function () {
     describe('Should send ETH & ERC20 to account', function () {
       beforeEach(async () => {
         await loadFixture(testSetup__depositAndSplitERC20())
-        deposit = ethers.utils.parseEther((10 * Math.random()).toFixed(18))
+        ethProxyBalance = ethers.utils.parseEther(
+          (10 * Math.random()).toFixed(18),
+        )
         await signer.sendTransaction({
           to: splitAddress,
-          value: deposit,
+          value: ethProxyBalance,
         })
         await splitMain
           .connect(signer)
@@ -1042,17 +1483,17 @@ describe('SplitMain', function () {
             splitAddress,
             accounts,
             percentAllocations,
-            distributionFee,
+            distributorFee,
             account,
           )
       })
 
       it('ETH', async function () {
-        let myETHBalance = await splitMain.getETHBalance(account)
-        myETHBalance = myETHBalance.sub(One)
+        let ethBalance = await splitMain.getETHBalance(account)
+        ethBalance = ethBalance.sub(One)
         await expect(() => tx()).to.changeEtherBalances(
           [addressProvider(splitMain.address), signer],
-          [myETHBalance.mul(-1), myETHBalance],
+          [ethBalance.mul(-1), ethBalance],
         )
       })
 
@@ -1070,20 +1511,18 @@ describe('SplitMain', function () {
       })
 
       it('Should emit Withdrawal event with expected args', async function () {
-        let myETHBalance = await splitMain.getETHBalance(account)
-        myETHBalance = myETHBalance.sub(One)
-        let myERC20Balance = await splitMain.getERC20Balance(
+        const ethBalance = await splitMain.getETHBalance(account)
+        const erc20Balance = await splitMain.getERC20Balance(
           account,
           erc20Contract.address,
         )
-        myERC20Balance = myERC20Balance.sub(One)
         await expect(tx())
           .to.emit(splitMain, 'Withdrawal')
           .withArgs(
             account,
-            true,
+            ethBalance.sub(One),
             [erc20Contract.address],
-            [myETHBalance, myERC20Balance],
+            [erc20Balance.sub(One)],
           )
       })
     })
@@ -1111,27 +1550,27 @@ describe('SplitMain', function () {
       tx = () =>
         signer.sendTransaction({
           to: splitAddress,
-          value: deposit,
+          value: ethProxyBalance,
         })
     })
 
     beforeEach(async () => {
       await loadFixture(testSetup__createSplit())
-      deposit = ethers.utils.parseEther(Math.random().toFixed(18))
+      ethProxyBalance = ethers.utils.parseEther(Math.random().toFixed(18))
     })
 
     it('Should be able to receive ETH', async function () {
       await expect(tx).to.changeEtherBalances(
         [signer, addressProvider(splitAddress)],
-        [deposit.mul(-1), deposit],
+        [ethProxyBalance.mul(-1), ethProxyBalance],
       )
     })
 
-    it('Should emit a ReceiveETH event with the expected args', async function () {
+    it('Should emit ReceiveETH event with the expected args', async function () {
       await loadFixture(testSetup__attachToSplitWallet())
       await expect(tx())
         .to.emit(splitWallet.attach(splitAddress), 'ReceiveETH')
-        .withArgs(splitAddress, deposit)
+        .withArgs(splitAddress, ethProxyBalance)
     })
   })
 
@@ -1157,13 +1596,13 @@ describe('SplitMain', function () {
               await splitWallet
                 .attach(splitAddress)
                 .connect(signer)
-                .sendETHToMain(deposit),
+                .sendETHToMain(ethProxyBalance),
             ).to.changeEtherBalances(
               [
                 addressProvider(splitAddress),
                 addressProvider(splitMain.address),
               ],
-              [deposit.mul(-1), deposit],
+              [ethProxyBalance.mul(-1), ethProxyBalance],
             )
           },
         )
@@ -1182,7 +1621,7 @@ describe('SplitMain', function () {
           testSetup__depositERC20ToSplit({ controller: account }),
         )
         await loadFixture(testSetup__attachToSplitWallet())
-        erc20Deposit = erc20Deposit.sub(One)
+        erc20ProxyBalance = erc20ProxyBalance.sub(One)
       })
 
       it("Should emit 'Transfer' from ERC20 with the expected args", async function () {
@@ -1193,10 +1632,10 @@ describe('SplitMain', function () {
               splitWallet
                 .attach(splitAddress)
                 .connect(signer)
-                .sendERC20ToMain(erc20Contract.address, erc20Deposit),
+                .sendERC20ToMain(erc20Contract.address, erc20ProxyBalance),
             )
               .to.emit(erc20Contract, 'Transfer')
-              .withArgs(splitAddress, splitMain.address, erc20Deposit)
+              .withArgs(splitAddress, splitMain.address, erc20ProxyBalance)
           },
         )
       })
@@ -1209,14 +1648,14 @@ describe('SplitMain', function () {
               splitWallet
                 .attach(splitAddress)
                 .connect(signer)
-                .sendERC20ToMain(erc20Contract.address, erc20Deposit),
+                .sendERC20ToMain(erc20Contract.address, erc20ProxyBalance),
             ).to.changeTokenBalances(
               erc20Contract,
               [
                 addressProvider(splitAddress),
                 addressProvider(splitMain.address),
               ],
-              [erc20Deposit.mul(-1), erc20Deposit],
+              [erc20ProxyBalance.mul(-1), erc20ProxyBalance],
             )
           },
         )
@@ -1226,7 +1665,7 @@ describe('SplitMain', function () {
         await expect(
           splitWallet
             .connect(signer)
-            .sendERC20ToMain(erc20Contract.address, erc20Deposit),
+            .sendERC20ToMain(erc20Contract.address, erc20ProxyBalance),
         ).to.be.revertedWith(`Unauthorized()`)
       })
     })

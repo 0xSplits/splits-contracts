@@ -1,3 +1,0 @@
-export DAPP_SRC='contracts'
-export DAPP_SOLC=$(which solc)
-export DAPP_REMAPPINGS=$(cat remappings.txt)

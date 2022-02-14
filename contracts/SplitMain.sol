@@ -8,42 +8,65 @@ import {ERC20} from '@rari-capital/solmate/src/tokens/ERC20.sol';
 import {SafeTransferLib} from '@rari-capital/solmate/src/utils/SafeTransferLib.sol';
 
 /**
-                                                    ,s# ## mp
-                                                ;# ########### #p
-                                           ,s@ ######## B ########  m,
-                                       ,s# ####### W2`      l% ######## #p
-                                  ,s# ######## K*               |8 ######## #m,
-                              ,s# ######## f^                        7  ######## mp
-                          ;# ######## b|                                 |8 #######
-                     ,s  ######## b|                                   ,s  #########
-                 ,m# ####### 8T`                                   ;# ##############
-            ,;# ######## B7                                   ,s  ######## K7  @####
-        ,s# ######## T"                                   ,s  ######## T^      @####
-    ,# ######## W|                                    ;# ######## W2           @####
-    #########p                                   ,s  ######## B\               @####
-    ########### #p                           ,## ##########"                   @####
-    ###### ########  m,                 ,;# ######## B@####                    @####
-    #####   ^l ######### Qp         ,s# ######## b^   @####                    @####
-    #####        |8 ######## #m,;# ######## 8|        @####                    @####
-    #####            |8 ############### T|            @####                    @####
-    #####                '3  ######## mp              @####                    @####
-    #####                     |8 ######## #m,         @####                    @####
-    #####                          j  ######## m,     @####                    @####
-    #####                              |8 ######## #p @####                    @####
-    #####                                  ^7 #############                    @####
-    ##### Qp                                    |Y ########                    @####
-    %######## #p,                                   |8@####                    @####
-       j  ######## mp                                 @####                    @####
-           "Y ######## #p                             @####                    @####
-               ^7 ########  m,                        @####                    @####
-                    l% ######## #p                    @####                    @####
-                        |8 ######## #m,               @####               ,s# ######
-                             7  ######## m,           @####           ,s# ######## \
-                                 |5 ######## #p       @####       ;# ######## 8\
-                                     '7 ########  m,  @####  ,s@ ######## b7
-                                          l8 ######## #####  ####### WT`
-                                              |8 ############### B|
-                                                   7  ###### T"
+
+                                             █████████
+                                          ███████████████                  █████████
+                                         █████████████████               █████████████                 ███████
+                                        ███████████████████             ███████████████               █████████
+                                        ███████████████████             ███████████████              ███████████
+                                        ███████████████████             ███████████████               █████████
+                                         █████████████████               █████████████                 ███████
+                                          ███████████████                  █████████
+                                             █████████
+
+                             ███████████
+                          █████████████████                 █████████
+                         ███████████████████             ███████████████                  █████████
+                        █████████████████████           █████████████████               █████████████                ███████
+                       ███████████████████████         ███████████████████             ███████████████              █████████
+                       ███████████████████████         ███████████████████             ███████████████             ███████████
+                       ███████████████████████         ███████████████████             ███████████████              █████████
+                        █████████████████████           █████████████████               █████████████                ███████
+                         ███████████████████              █████████████                   █████████
+                          █████████████████                 █████████
+                             ███████████
+
+           ███████████
+       ███████████████████                  ███████████
+     ███████████████████████              ███████████████                  █████████
+    █████████████████████████           ███████████████████             ███████████████               █████████
+   ███████████████████████████         █████████████████████           █████████████████            █████████████              ███████
+   ███████████████████████████        ███████████████████████         ███████████████████          ███████████████            █████████
+   ███████████████████████████        ███████████████████████         ███████████████████          ███████████████           ███████████
+   ███████████████████████████        ███████████████████████         ███████████████████          ███████████████            █████████
+   ███████████████████████████         █████████████████████           █████████████████            █████████████              ███████
+    █████████████████████████           ███████████████████              █████████████                █████████
+      █████████████████████               ███████████████                  █████████
+        █████████████████                   ███████████
+           ███████████
+
+                             ███████████
+                          █████████████████                 █████████
+                         ███████████████████             ███████████████                  █████████
+                        █████████████████████           █████████████████               █████████████                ███████
+                       ███████████████████████         ███████████████████             ███████████████              █████████
+                       ███████████████████████         ███████████████████             ███████████████             ███████████
+                       ███████████████████████         ███████████████████             ███████████████              █████████
+                        █████████████████████           █████████████████               █████████████                ███████
+                         ███████████████████              █████████████                   █████████
+                          █████████████████                 █████████
+                             ███████████
+
+                                             █████████
+                                          ███████████████                  █████████
+                                         █████████████████               █████████████                 ███████
+                                        ███████████████████             ███████████████               █████████
+                                        ███████████████████             ███████████████              ███████████
+                                        ███████████████████             ███████████████               █████████
+                                         █████████████████               █████████████                 ███████
+                                          ███████████████                  █████████
+                                             █████████
+
  */
 
 /**
@@ -72,10 +95,10 @@ error InvalidSplit__AccountsOutOfOrder(uint256 index);
 /// @notice Invalid percentAllocation of zero at `index`
 /// @param index Index of zero percentAllocation
 error InvalidSplit__AllocationMustBePositive(uint256 index);
-/// @notice Invalid distributionFee `distributionFee` cannot be greater than 10% (1e5)
-/// @param distributionFee Invalid distributionFee amount
-error InvalidSplit__InvalidDistributionFee(uint32 distributionFee);
-/// @notice Invalid hash `hash` from split data (accounts, percentAllocations, distributionFee)
+/// @notice Invalid distributorFee `distributorFee` cannot be greater than 10% (1e5)
+/// @param distributorFee Invalid distributorFee amount
+error InvalidSplit__InvalidDistributorFee(uint32 distributorFee);
+/// @notice Invalid hash `hash` from split data (accounts, percentAllocations, distributorFee)
 /// @param hash Invalid hash
 error InvalidSplit__InvalidHash(bytes32 hash);
 /// @notice Invalid new controlling address `newController` for mutable split
@@ -116,8 +139,8 @@ contract SplitMain is ISplitMain {
 
   /// @notice constant to scale uints into percentages (1e6 == 100%)
   uint256 public constant PERCENTAGE_SCALE = 1e6;
-  /// @notice maximum distribution fee; 1e5 = 10% * PERCENTAGE_SCALE
-  uint256 internal constant MAX_DISTRIBUTION_FEE = 1e5;
+  /// @notice maximum distributor fee; 1e5 = 10% * PERCENTAGE_SCALE
+  uint256 internal constant MAX_DISTRIBUTOR_FEE = 1e5;
   /// @notice address of wallet implementation for split proxies
   address public immutable override walletImplementation;
 
@@ -156,12 +179,12 @@ contract SplitMain is ISplitMain {
   /** @notice Reverts if the split with recipients represented by `accounts` and `percentAllocations` is malformed
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    */
   modifier validSplit(
     address[] memory accounts,
     uint32[] memory percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   ) {
     if (accounts.length < 2)
       revert InvalidSplit__TooFewAccounts(accounts.length);
@@ -177,7 +200,7 @@ contract SplitMain is ISplitMain {
       // overflow should be impossible in for-loop index
       // cache accounts length to save gas
       uint256 loopLength = accounts.length - 1;
-      for (uint256 i = 0; i < loopLength; i++) {
+      for (uint256 i = 0; i < loopLength; ++i) {
         // overflow should be impossible in array access math
         if (accounts[i] >= accounts[i + 1])
           revert InvalidSplit__AccountsOutOfOrder(i);
@@ -188,8 +211,8 @@ contract SplitMain is ISplitMain {
       if (percentAllocations[loopLength] == uint32(0))
         revert InvalidSplit__AllocationMustBePositive(loopLength);
     }
-    if (distributionFee > MAX_DISTRIBUTION_FEE)
-      revert InvalidSplit__InvalidDistributionFee(distributionFee);
+    if (distributorFee > MAX_DISTRIBUTOR_FEE)
+      revert InvalidSplit__InvalidDistributorFee(distributorFee);
     _;
   }
 
@@ -223,28 +246,28 @@ contract SplitMain is ISplitMain {
    */
   receive() external payable {}
 
-  /** @notice Creates a new split with recipients `accounts` with ownerships `percentAllocations`, a keeper fee for splitting of `distributionFee` and the controlling address `controller`
+  /** @notice Creates a new split with recipients `accounts` with ownerships `percentAllocations`, a keeper fee for splitting of `distributorFee` and the controlling address `controller`
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    *  @param controller Controlling address (0x0 if immutable)
    *  @return split Address of newly created split
    */
   function createSplit(
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee,
+    uint32 distributorFee,
     address controller
   )
     external
     override
-    validSplit(accounts, percentAllocations, distributionFee)
+    validSplit(accounts, percentAllocations, distributorFee)
     returns (address split)
   {
     bytes32 splitHash = _hashSplit(
       accounts,
       percentAllocations,
-      distributionFee
+      distributorFee
     );
     if (controller == address(0)) {
       // create immutable split
@@ -259,56 +282,49 @@ contract SplitMain is ISplitMain {
     emit CreateSplit(split);
   }
 
-  /** @notice Predicts the address for an immutable split created with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributionFee`
+  /** @notice Predicts the address for an immutable split created with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributorFee`
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    *  @return split Predicted address of such an immutable split
    */
   function predictImmutableSplitAddress(
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   )
     external
     view
     override
-    validSplit(accounts, percentAllocations, distributionFee)
+    validSplit(accounts, percentAllocations, distributorFee)
     returns (address split)
   {
     bytes32 splitHash = _hashSplit(
       accounts,
       percentAllocations,
-      distributionFee
+      distributorFee
     );
     split = Clones.predictDeterministicAddress(walletImplementation, splitHash);
   }
 
-  /** @notice Updates an existing split with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributionFee`
+  /** @notice Updates an existing split with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributorFee`
    *  @param split Address of mutable split to update
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    */
   function updateSplit(
     address split,
     address[] calldata accounts,
     uint32[] calldata percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   )
     external
     override
     onlySplitController(split)
-    validSplit(accounts, percentAllocations, distributionFee)
+    validSplit(accounts, percentAllocations, distributorFee)
   {
-    bytes32 splitHash = _hashSplit(
-      accounts,
-      percentAllocations,
-      distributionFee
-    );
-    // store new hash in storage for future verification
-    splits[split].hash = splitHash;
-    emit UpdateSplit(split);
+    _updateSplit(split, accounts, percentAllocations, distributorFee);
   }
 
   /** @notice Begins transfer of the controlling address of mutable split `split` to `newController`
@@ -365,76 +381,65 @@ contract SplitMain is ISplitMain {
   }
 
   /** @notice Distributes the ETH balance for split `split`
-   *  @dev `accounts`, `percentAllocations`, and `distributionFee` are verified by hashing
+   *  @dev `accounts`, `percentAllocations`, and `distributorFee` are verified by hashing
    *  & comparing to the hash in storage associated with split `split`
    *  @param split Address of split to distribute balance for
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
-   *  @param distributionAddress Address to pay `distributionFee` to
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
    */
   function distributeETH(
     address split,
-    address[] memory accounts,
-    uint32[] memory percentAllocations,
-    uint32 distributionFee,
-    address distributionAddress
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
+  ) external override validSplit(accounts, percentAllocations, distributorFee) {
+    // use internal fn instead of modifier to avoid stack depth compiler errors
+    _validSplitHash(split, accounts, percentAllocations, distributorFee);
+    _distributeETH(
+      split,
+      accounts,
+      percentAllocations,
+      distributorFee,
+      distributorAddress
+    );
+  }
+
+  /** @notice Updates & distributes the ETH balance for split `split`
+   *  @dev only callable by SplitController
+   *  @param split Address of split to distribute balance for
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
+   */
+  function updateAndDistributeETH(
+    address split,
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
   )
     external
     override
-    validSplit(accounts, percentAllocations, distributionFee)
+    onlySplitController(split)
+    validSplit(accounts, percentAllocations, distributorFee)
   {
-    // use internal fn instead of modifier to avoid stack depth compiler errors
-    _validSplitHash(split, accounts, percentAllocations, distributionFee);
-    uint256 mainBalance = ethBalances[split];
-    uint256 proxyBalance = split.balance;
-    // leave balance of 1 in SplitMain for gas efficiency
-    // underflow if mainBalance + proxyBalance = 0 (no funds to split)
-    uint256 amountToSplit = mainBalance + proxyBalance - 1;
-    if (mainBalance != 1) ethBalances[split] = 1;
-    // emit event with gross amountToSplit (before deducting distributionFee)
-    emit DistributeETH(split, amountToSplit, distributionAddress);
-    if (distributionFee != 0) {
-      // given `amountToSplit`, calculate keeper fee
-      uint256 distributionFeeAmount = _scaleAmountByPercentage(
-        amountToSplit,
-        distributionFee
-      );
-      unchecked {
-        // credit keeper with fee
-        // overflow should be impossible with validated distributionFee
-        ethBalances[
-          distributionAddress != address(0) ? distributionAddress : msg.sender
-        ] += distributionFeeAmount;
-        // given keeper fee, calculate how much to distribute to split recipients
-        // underflow should be impossible with validated distributionFee
-        amountToSplit -= distributionFeeAmount;
-      }
-    }
-    unchecked {
-      // distribute remaining balance
-      // overflow should be impossible in for-loop index
-      // cache accounts length to save gas
-      uint256 accountsLength = accounts.length;
-      for (uint256 i = 0; i < accountsLength; i++) {
-        // overflow should be impossible with validated allocations
-        ethBalances[accounts[i]] += _scaleAmountByPercentage(
-          amountToSplit,
-          percentAllocations[i]
-        );
-      }
-    }
-    // flush proxy ETH balance to SplitMain
-    // split proxy should be guaranteed to exist at this address after validating splitHash
-    // (attacker can't deploy own contract to address with high balance & empty sendETHToMain
-    // to drain ETH from SplitMain)
-    // could technically check if (change in proxy balance == change in SplitMain balance)
-    // before/after external call, but seems like extra gas for no practical benefit
-    if (proxyBalance > 0) SplitWallet(split).sendETHToMain(proxyBalance);
+    _updateSplit(split, accounts, percentAllocations, distributorFee);
+    // know splitHash is valid immediately after updating; only accessible via controller
+    _distributeETH(
+      split,
+      accounts,
+      percentAllocations,
+      distributorFee,
+      distributorAddress
+    );
   }
 
   /** @notice Distributes the ERC20 `token` balance for split `split`
-   *  @dev `accounts`, `percentAllocations`, and `distributionFee` are verified by hashing
+   *  @dev `accounts`, `percentAllocations`, and `distributorFee` are verified by hashing
    *  & comparing to the hash in storage associated with split `split`
    *  @dev pernicious ERC20s may cause overflow in this function inside
    *  _scaleAmountByPercentage, but results do not affect ETH & other ERC20 balances
@@ -442,109 +447,87 @@ contract SplitMain is ISplitMain {
    *  @param token Address of ERC20 to distribute balance for
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
-   *  @param distributionAddress Address to pay `distributionFee` to
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
    */
   function distributeERC20(
     address split,
     ERC20 token,
-    address[] memory accounts,
-    uint32[] memory percentAllocations,
-    uint32 distributionFee,
-    address distributionAddress
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
+  ) external override validSplit(accounts, percentAllocations, distributorFee) {
+    // use internal fn instead of modifier to avoid stack depth compiler errors
+    _validSplitHash(split, accounts, percentAllocations, distributorFee);
+    _distributeERC20(
+      split,
+      token,
+      accounts,
+      percentAllocations,
+      distributorFee,
+      distributorAddress
+    );
+  }
+
+  /** @notice Updates & distributes the ERC20 `token` balance for split `split`
+   *  @dev only callable by SplitController
+   *  @dev pernicious ERC20s may cause overflow in this function inside
+   *  _scaleAmountByPercentage, but results do not affect ETH & other ERC20 balances
+   *  @param split Address of split to distribute balance for
+   *  @param token Address of ERC20 to distribute balance for
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
+   */
+  function updateAndDistributeERC20(
+    address split,
+    ERC20 token,
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
   )
     external
     override
-    validSplit(accounts, percentAllocations, distributionFee)
+    onlySplitController(split)
+    validSplit(accounts, percentAllocations, distributorFee)
   {
-    // use internal fn instead of modifier to avoid stack depth compiler errors
-    _validSplitHash(split, accounts, percentAllocations, distributionFee);
-    uint256 amountToSplit;
-    uint256 mainBalance = erc20Balances[token][split];
-    uint256 proxyBalance = token.balanceOf(split);
-    if (proxyBalance > 1) {
-      unchecked {
-        // leave balance of 1 in ERC20 for gas efficiency
-        // leave balances of 1 in SplitMain for gas efficiency
-        // overflow impossible with proxyBalance >= 2
-        amountToSplit = mainBalance + proxyBalance - 2;
-      }
-    } else {
-      // leave balances of 1 in SplitMain for gas efficiency
-      // underflow if erc20Balance is 0 & proxyBalance is 0 or 1 (no funds to split)
-      amountToSplit = mainBalance - 1;
-    }
-    // leave balance of 1 for gas efficiency
-    if (mainBalance != 1) erc20Balances[token][split] = 1;
-    // emit event with gross amountToSplit (before deducting distributionFee)
-    emit DistributeERC20(split, token, amountToSplit, distributionAddress);
-    if (distributionFee != 0) {
-      // given `amountToSplit`, calculate keeper fee
-      uint256 distributionFeeAmount = _scaleAmountByPercentage(
-        amountToSplit,
-        distributionFee
-      );
-      // overflow should be impossible with validated distributionFee
-      unchecked {
-        // credit keeper with fee
-        erc20Balances[token][
-          distributionAddress != address(0) ? distributionAddress : msg.sender
-        ] += distributionFeeAmount;
-        // given keeper fee, calculate how much to distribute to split recipients
-        amountToSplit -= distributionFeeAmount;
-      }
-    }
-    // distribute remaining balance
-    // overflows should be impossible in for-loop with validated allocations
-    unchecked {
-      // cache accounts length to save gas
-      uint256 accountsLength = accounts.length;
-      for (uint256 i = 0; i < accountsLength; i++) {
-        erc20Balances[token][accounts[i]] += _scaleAmountByPercentage(
-          amountToSplit,
-          percentAllocations[i]
-        );
-      }
-    }
-    // split proxy should be guaranteed to exist at this address after validating splitHash
-    // (attacker can't deploy own contract to address with high ERC20 balance & empty
-    // sendERC20ToMain to drain ERC20 from SplitMain)
-    // could technically check if (change in proxy ERC20 balance == change in splitmain
-    // ERC20 balance) before/after external call, but seems like extra gas for no practical benefit
-    unchecked {
-      // flush proxy ERC20 balance to SplitMain
-      // leave balance of 1 in ERC20 for gas efficiency
-      // overflow is impossible in proxyBalance math
-      if (proxyBalance > 1)
-        SplitWallet(split).sendERC20ToMain(token, proxyBalance - 1);
-    }
+    _updateSplit(split, accounts, percentAllocations, distributorFee);
+    // know splitHash is valid immediately after updating; only accessible via controller
+    _distributeERC20(
+      split,
+      token,
+      accounts,
+      percentAllocations,
+      distributorFee,
+      distributorAddress
+    );
   }
 
   /** @notice Withdraw ETH &/ ERC20 balances for account `account`
    *  @param account Address to withdraw on behalf of
-   *  @param eth Bool of whether to withdraw ETH
-   *  @param tokens Addresses of ERC20s to withdraw for
+   *  @param withdrawETH Withdraw all ETH if nonzero
+   *  @param tokens Addresses of ERC20s to withdraw
    */
   function withdraw(
     address account,
-    bool eth,
+    uint256 withdrawETH,
     ERC20[] calldata tokens
   ) external override {
-    uint256 ethUint = eth ? 1 : 0;
+    uint256[] memory tokenAmounts = new uint256[](tokens.length);
+    uint256 ethAmount;
+    if (withdrawETH != 0) {
+      ethAmount = _withdraw(account);
+    }
     unchecked {
-      // overflow should be impossible in array length math
-      uint256[] memory withdrawnAmounts = new uint256[](
-        ethUint + tokens.length
-      );
-      if (eth) {
-        withdrawnAmounts[0] = _withdraw(account);
-      }
       // overflow should be impossible in for-loop index
-      for (uint256 i = 0; i < tokens.length; i++) {
+      for (uint256 i = 0; i < tokens.length; ++i) {
         // overflow should be impossible in array length math
-        withdrawnAmounts[ethUint + i] = _withdrawERC20(account, tokens[i]);
+        tokenAmounts[i] = _withdrawERC20(account, tokens[i]);
       }
-      emit Withdrawal(account, eth, tokens, withdrawnAmounts);
+      emit Withdrawal(account, ethAmount, tokens, tokenAmounts);
     }
   }
 
@@ -585,7 +568,8 @@ contract SplitMain is ISplitMain {
    *  @return Account's balance of ETH
    */
   function getETHBalance(address account) external view returns (uint256) {
-    return ethBalances[account];
+    return
+      ethBalances[account] + (splits[account].hash != 0 ? account.balance : 0);
   }
 
   /** @notice Returns the ERC20 balance of token `token` for account `account`
@@ -598,7 +582,9 @@ contract SplitMain is ISplitMain {
     view
     returns (uint256)
   {
-    return erc20Balances[token][account];
+    return
+      erc20Balances[token][account] +
+      (splits[account].hash != 0 ? token.balanceOf(account) : 0);
   }
 
   /**
@@ -616,7 +602,7 @@ contract SplitMain is ISplitMain {
       sum += numbers[i];
       unchecked {
         // overflow should be impossible in for-loop index
-        i++;
+        ++i;
       }
     }
   }
@@ -624,34 +610,194 @@ contract SplitMain is ISplitMain {
   /** @notice Hashes a split
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    *  @return computedHash Hash of the split.
    */
   function _hashSplit(
     address[] memory accounts,
     uint32[] memory percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   ) internal pure returns (bytes32) {
     return
-      keccak256(
-        abi.encodePacked(accounts, percentAllocations, distributionFee)
-      );
+      keccak256(abi.encodePacked(accounts, percentAllocations, distributorFee));
   }
 
-  /** @notice Checks hash from `accounts`, `percentAllocations`, and `distributionFee` against the hash stored for `split`
+  /** @notice Updates an existing split with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributorFee`
+   *  @param split Address of mutable split to update
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   */
+  function _updateSplit(
+    address split,
+    address[] calldata accounts,
+    uint32[] calldata percentAllocations,
+    uint32 distributorFee
+  ) internal {
+    bytes32 splitHash = _hashSplit(
+      accounts,
+      percentAllocations,
+      distributorFee
+    );
+    // store new hash in storage for future verification
+    splits[split].hash = splitHash;
+    emit UpdateSplit(split);
+  }
+
+  /** @notice Checks hash from `accounts`, `percentAllocations`, and `distributorFee` against the hash stored for `split`
    *  @param split Address of hash to check
    *  @param accounts Ordered, unique list of addresses with ownership in the split
    *  @param percentAllocations Percent allocations associated with each address
-   *  @param distributionFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    */
   function _validSplitHash(
     address split,
     address[] memory accounts,
     uint32[] memory percentAllocations,
-    uint32 distributionFee
+    uint32 distributorFee
   ) internal view {
-    bytes32 hash = _hashSplit(accounts, percentAllocations, distributionFee);
+    bytes32 hash = _hashSplit(accounts, percentAllocations, distributorFee);
     if (splits[split].hash != hash) revert InvalidSplit__InvalidHash(hash);
+  }
+
+  /** @notice Distributes the ETH balance for split `split`
+   *  @dev `accounts`, `percentAllocations`, and `distributorFee` must be verified before calling
+   *  @param split Address of split to distribute balance for
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
+   */
+  function _distributeETH(
+    address split,
+    address[] memory accounts,
+    uint32[] memory percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
+  ) internal {
+    uint256 mainBalance = ethBalances[split];
+    uint256 proxyBalance = split.balance;
+    // if mainBalance is positive, leave 1 in SplitMain for gas efficiency
+    uint256 amountToSplit;
+    unchecked {
+      // underflow should be impossible
+      if (mainBalance > 0) mainBalance -= 1;
+      // overflow should be impossible
+      amountToSplit = mainBalance + proxyBalance;
+    }
+    if (mainBalance > 0) ethBalances[split] = 1;
+    // emit event with gross amountToSplit (before deducting distributorFee)
+    emit DistributeETH(split, amountToSplit, distributorAddress);
+    if (distributorFee != 0) {
+      // given `amountToSplit`, calculate keeper fee
+      uint256 distributorFeeAmount = _scaleAmountByPercentage(
+        amountToSplit,
+        distributorFee
+      );
+      unchecked {
+        // credit keeper with fee
+        // overflow should be impossible with validated distributorFee
+        ethBalances[
+          distributorAddress != address(0) ? distributorAddress : msg.sender
+        ] += distributorFeeAmount;
+        // given keeper fee, calculate how much to distribute to split recipients
+        // underflow should be impossible with validated distributorFee
+        amountToSplit -= distributorFeeAmount;
+      }
+    }
+    unchecked {
+      // distribute remaining balance
+      // overflow should be impossible in for-loop index
+      // cache accounts length to save gas
+      uint256 accountsLength = accounts.length;
+      for (uint256 i = 0; i < accountsLength; ++i) {
+        // overflow should be impossible with validated allocations
+        ethBalances[accounts[i]] += _scaleAmountByPercentage(
+          amountToSplit,
+          percentAllocations[i]
+        );
+      }
+    }
+    // flush proxy ETH balance to SplitMain
+    // split proxy should be guaranteed to exist at this address after validating splitHash
+    // (attacker can't deploy own contract to address with high balance & empty sendETHToMain
+    // to drain ETH from SplitMain)
+    // could technically check if (change in proxy balance == change in SplitMain balance)
+    // before/after external call, but seems like extra gas for no practical benefit
+    if (proxyBalance > 0) SplitWallet(split).sendETHToMain(proxyBalance);
+  }
+
+  /** @notice Distributes the ERC20 `token` balance for split `split`
+   *  @dev `accounts`, `percentAllocations`, and `distributorFee` must be verified before calling
+   *  @dev pernicious ERC20s may cause overflow in this function inside
+   *  _scaleAmountByPercentage, but results do not affect ETH & other ERC20 balances
+   *  @param split Address of split to distribute balance for
+   *  @param token Address of ERC20 to distribute balance for
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param distributorAddress Address to pay `distributorFee` to
+   */
+  function _distributeERC20(
+    address split,
+    ERC20 token,
+    address[] memory accounts,
+    uint32[] memory percentAllocations,
+    uint32 distributorFee,
+    address distributorAddress
+  ) internal {
+    uint256 amountToSplit;
+    uint256 mainBalance = erc20Balances[token][split];
+    uint256 proxyBalance = token.balanceOf(split);
+    unchecked {
+      // if mainBalance &/ proxyBalance are positive, leave 1 for gas efficiency
+      // underflow should be impossible
+      if (proxyBalance > 0) proxyBalance -= 1;
+      // underflow should be impossible
+      if (mainBalance > 0) {
+        mainBalance -= 1;
+      }
+      // overflow should be impossible
+      amountToSplit = mainBalance + proxyBalance;
+    }
+    if (mainBalance > 0) erc20Balances[token][split] = 1;
+    // emit event with gross amountToSplit (before deducting distributorFee)
+    emit DistributeERC20(split, token, amountToSplit, distributorAddress);
+    if (distributorFee != 0) {
+      // given `amountToSplit`, calculate keeper fee
+      uint256 distributorFeeAmount = _scaleAmountByPercentage(
+        amountToSplit,
+        distributorFee
+      );
+      // overflow should be impossible with validated distributorFee
+      unchecked {
+        // credit keeper with fee
+        erc20Balances[token][
+          distributorAddress != address(0) ? distributorAddress : msg.sender
+        ] += distributorFeeAmount;
+        // given keeper fee, calculate how much to distribute to split recipients
+        amountToSplit -= distributorFeeAmount;
+      }
+    }
+    // distribute remaining balance
+    // overflows should be impossible in for-loop with validated allocations
+    unchecked {
+      // cache accounts length to save gas
+      uint256 accountsLength = accounts.length;
+      for (uint256 i = 0; i < accountsLength; ++i) {
+        erc20Balances[token][accounts[i]] += _scaleAmountByPercentage(
+          amountToSplit,
+          percentAllocations[i]
+        );
+      }
+    }
+    // split proxy should be guaranteed to exist at this address after validating splitHash
+    // (attacker can't deploy own contract to address with high ERC20 balance & empty
+    // sendERC20ToMain to drain ERC20 from SplitMain)
+    // doesn't support rebasing or fee-on-transfer tokens
+    // flush extra proxy ERC20 balance to SplitMain
+    if (proxyBalance > 0)
+      SplitWallet(split).sendERC20ToMain(token, proxyBalance);
   }
 
   /** @notice Multiplies an amount by a scaled percentage
@@ -680,7 +826,7 @@ contract SplitMain is ISplitMain {
    */
   function _withdraw(address account) internal returns (uint256 withdrawn) {
     // leave balance of 1 for gas efficiency
-    // underflow is ethBalance is 0
+    // underflow if ethBalance is 0
     withdrawn = ethBalances[account] - 1;
     ethBalances[account] = 1;
     account.safeTransferETH(withdrawn);
@@ -695,7 +841,7 @@ contract SplitMain is ISplitMain {
     returns (uint256 withdrawn)
   {
     // leave balance of 1 for gas efficiency
-    // underflow is erc20Balance is 0
+    // underflow if erc20Balance is 0
     withdrawn = erc20Balances[token][account] - 1;
     erc20Balances[token][account] = 1;
     token.safeTransfer(account, withdrawn);

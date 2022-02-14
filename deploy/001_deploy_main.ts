@@ -11,6 +11,9 @@ const HARDHAT_CHAIN = 31337
 const NETWORK_MAP: Dictionary<string> = {
   '1': 'mainnet',
   '3': 'ropsten',
+  '4': 'rinkeby',
+  '5': 'goerli',
+  '42': 'kovan',
   '1337': 'localhost',
   '31337': 'hardhat',
 }

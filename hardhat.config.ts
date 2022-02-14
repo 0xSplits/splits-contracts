@@ -9,6 +9,7 @@ import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
 import 'solidity-coverage'
 import '@primitivefi/hardhat-dodoc'
+import '@nomiclabs/hardhat-etherscan'
 
 import 'tsconfig-paths/register'
 
@@ -54,16 +55,36 @@ const config: HardhatUserConfig = {
     deployer: 0,
   },
   networks: {
-    ropsten: {
-      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.ROPSTEN_DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.ROPSTEN_DEPLOYER_PRIVATE_KEY}`]
+    mainnet: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
         : 'remote',
     },
-    //   mainnet: {
-    //     url: `https://eth-mainnet.alchemyapi.io/v2/${alchemyAPIKey}`,
-    //     accounts: [deployerPrivateKey],
-    //   },
+    ropsten: {
+      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    goerli: {
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    kovan: {
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
     hardhat: {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -71,6 +92,9 @@ const config: HardhatUserConfig = {
       },
       chainId: 1337,
     },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
