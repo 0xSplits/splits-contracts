@@ -109,6 +109,7 @@ const config: HardhatUserConfig = {
       'ReverseRecords',
       'SafeTransferLib',
       'ERC20',
+      'TestInternalTxn',
     ],
   },
 }
