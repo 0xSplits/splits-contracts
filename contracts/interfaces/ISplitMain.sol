@@ -88,13 +88,31 @@ interface ISplitMain {
 
   /** @notice emitted after each successful split creation
    *  @param split Address of the created split
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
+   *  @param controller Controlling address (0x0 if immutable)
    */
-  event CreateSplit(address indexed split);
+  event CreateSplit(
+    address indexed split,
+    address[] accounts,
+    uint32[] percentAllocations,
+    uint32 distributorFee,
+    address controller
+  );
 
   /** @notice emitted after each successful split update
    *  @param split Address of the updated split
+   *  @param accounts Ordered, unique list of addresses with ownership in the split
+   *  @param percentAllocations Percent allocations associated with each address
+   *  @param distributorFee Keeper fee paid by split to cover gas costs of distribution
    */
-  event UpdateSplit(address indexed split);
+  event UpdateSplit(
+    address indexed split,
+    address[] accounts,
+    uint32[] percentAllocations,
+    uint32 distributorFee
+  );
 
   /** @notice emitted after each initiated split control transfer
    *  @param split Address of the split control transfer was initiated for

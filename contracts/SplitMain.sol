@@ -279,7 +279,13 @@ contract SplitMain is ISplitMain {
     }
     // store split's hash in storage for future verification
     splits[split].hash = splitHash;
-    emit CreateSplit(split);
+    emit CreateSplit(
+      split,
+      accounts,
+      percentAllocations,
+      distributorFee,
+      controller
+    );
   }
 
   /** @notice Predicts the address for an immutable split created with recipients `accounts` with ownerships `percentAllocations` and a keeper fee for splitting of `distributorFee`
@@ -641,7 +647,7 @@ contract SplitMain is ISplitMain {
     );
     // store new hash in storage for future verification
     splits[split].hash = splitHash;
-    emit UpdateSplit(split);
+    emit UpdateSplit(split, accounts, percentAllocations, distributorFee);
   }
 
   /** @notice Checks hash from `accounts`, `percentAllocations`, and `distributorFee` against the hash stored for `split`

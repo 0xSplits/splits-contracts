@@ -55,6 +55,7 @@ const config: HardhatUserConfig = {
     deployer: 0,
   },
   networks: {
+    // ethereum
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: process.env.DEPLOYER_PRIVATE_KEY
@@ -85,6 +86,20 @@ const config: HardhatUserConfig = {
         ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
         : 'remote',
     },
+    // polygon
+    polygon: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    // localhost
     hardhat: {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -94,7 +109,20 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.POLYGON_ETHERSCAN_API_KEY,
+    // object structure needs us to upgrade hardhat to ^3.0.0 I think
+    // until then, swap out env as needed
+    // apiKey: {
+    //   // ethereum
+    //   mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
+    //   ropsten: process.env.MAINNET_ETHERSCAN_API_KEY,
+    //   rinkeby: process.env.MAINNET_ETHERSCAN_API_KEY,
+    //   goerli: process.env.MAINNET_ETHERSCAN_API_KEY,
+    //   kovan: process.env.MAINNET_ETHERSCAN_API_KEY,
+    //   // polygon
+    //   polygon: process.env.POLYGON_ETHERSCAN_API_KEY,
+    //   polygonMumbai: process.env.POLYGON_ETHERSCAN_API_KEY,
+    // },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
