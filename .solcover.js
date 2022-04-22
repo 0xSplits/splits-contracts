@@ -1,3 +1,3 @@
 module.exports = {
-  skipFiles: ['Multicall2.sol', 'interfaces/ReverseRecords.sol'],
+  skipFiles: ['Multicall2.sol',  'TestInternalTxn.sol', 'interfaces/ReverseRecords.sol'],
 }
