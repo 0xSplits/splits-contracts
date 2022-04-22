@@ -3,15 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "export": "next export",
     "eslint": "eslint . --ext '.ts,.tsx'",
     "eslint:fix": "eslint . --ext '.ts,.tsx' --fix",
     "prettier": "prettier --check --config .prettierrc './**/*.{.js,jsx,ts,tsx,sol}'",
     "prettier:fix": "prettier --config .prettierrc './**/*.{.js,jsx,ts,tsx,sol}' --write",
     "typecheck": "tsc --noEmit",
+    "typechain": "hardhat typechain",
     "test": "hardhat test",
     "coverage": "hardhat coverage"
   },
