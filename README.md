@@ -1,5 +1,7 @@
 # splits-contracts
 
+[![codecov](https://codecov.io/gh/0xSplits/splits-contracts/branch/main/graph/badge.svg?token=ERFQOFF0L7)](https://codecov.io/gh/0xSplits/splits-contracts)
+
 ## Run locally
 ```
 yarn hardhat node
