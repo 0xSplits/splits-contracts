@@ -29,6 +29,9 @@ jobs:
       - name: Install packages
         run: yarn install
 
+      - name: Run typechain
+        run: yarn typechain
+
       - name: Generate coverage report
         run: yarn coverage
         env:
