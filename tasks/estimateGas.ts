@@ -10,8 +10,8 @@ const SPLIT_MAIN_ADDRESS = '0x720472c8ce72c2A2D711333e064ABD3E6BbEAdd3'
 const NO_DISTRIBUTION_FEE = 0
 const SIZES = [2, 5, 10, 25, 50, 100, 200, 500]
 const GWEI_TO_ETH = 1e-9
-const ETH_PRICE = 3000
-const GAS_PRICE = 100
+const ETH_PRICE = 1000
+const GAS_PRICE = 10
 
 const formatBN = (bn: BigNumber) =>
   bn.toNumber().toLocaleString().replace(/,/g, '_')
@@ -86,14 +86,6 @@ export default task(
     const createSplitImmutableReceipt = await createSplitImmutableTx.wait()
     const splitAddress = createSplitImmutableReceipt.events?.[0]?.args?.split
 
-    const createSplitMutableTx = await splitMain.createSplit(
-      accounts[i],
-      percentAllocations[i],
-      NO_DISTRIBUTION_FEE,
-      controller,
-    )
-    const createSplitMutableReceipt = await createSplitMutableTx.wait()
-
     const newBalance = hre.ethers.utils.parseEther('100')
     // this is necessary because hex quantities with leading zeros are not valid at the JSON-RPC layer
     const newBalanceHex = hre.ethers.utils.hexStripZeros(
@@ -132,8 +124,6 @@ export default task(
     const sizeString = size.toString()
     const gasUsed = [
       createSplitImmutableReceipt,
-      createSplitMutableReceipt,
-      distributeETH1Receipt,
       distributeETHNReceipt,
     ].map((r) => r.gasUsed)
     totalGas.push([sizeString, ...gasUsed.map(formatBN)])
@@ -141,7 +131,8 @@ export default task(
       sizeString,
       ...gasUsed.map((bn) =>
         formatBNToCurrency(bn, {
-          maximumSignificantDigits: 2,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
         }),
       ),
     ])
@@ -162,10 +153,8 @@ export default task(
 
   const head = [
     'Size',
-    'CreateSplit Immutable',
-    'CreateSplit Mutable',
-    'distributeETH 1st',
-    'distributeETH Nth',
+    'Create Split',
+    'Distribute ETH',
   ]
   const alignment = Array(head.length).fill(Align.Right)
 
