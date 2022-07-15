@@ -65,14 +65,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     `${__dirname}/../networks/${networkName}.json`,
     JSON.stringify(info, null, 2),
   )
-
-  if (chainId === ChainId.Hardhat || chainId === ChainId.Localhost) {
-    const multicall = await deploy('Multicall2', {
-      from: deployer,
-      log: true,
-    })
-    console.log('Multicall: ', multicall.address) // eslint-disable-line no-console
-  }
 }
 
 export default func

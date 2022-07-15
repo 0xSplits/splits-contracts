@@ -105,11 +105,9 @@ const config: HardhatUserConfig = {
   dodoc: {
     exclude: [
       'Clones',
-      'Multicall2',
       'ReverseRecords',
       'SafeTransferLib',
       'ERC20',
-      'TestInternalTxn',
     ],
   },
 }
