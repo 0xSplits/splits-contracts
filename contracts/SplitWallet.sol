@@ -70,7 +70,7 @@ contract SplitWallet {
    *  ETH introduced since fn call is restricted to SplitMain
    *  @param amount Amount to send
    */
-  function sendETHToMain(uint256 amount) external payable onlySplitMain() {
+  function sendETHToMain(uint256 amount) external payable onlySplitMain {
     address(splitMain).safeTransferETH(amount);
   }
 
@@ -83,7 +83,7 @@ contract SplitWallet {
   function sendERC20ToMain(ERC20 token, uint256 amount)
     external
     payable
-    onlySplitMain()
+    onlySplitMain
   {
     token.safeTransfer(address(splitMain), amount);
   }

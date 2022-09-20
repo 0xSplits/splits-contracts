@@ -692,6 +692,10 @@ contract SplitMain is ISplitMain {
       amountToSplit = mainBalance + proxyBalance;
     }
     if (mainBalance > 0) ethBalances[split] = 1;
+    // use msg.sender if distributorAddress == address(0)
+    distributorAddress = distributorAddress != address(0)
+      ? distributorAddress
+      : msg.sender;
     // emit event with gross amountToSplit (before deducting distributorFee)
     emit DistributeETH(split, amountToSplit, distributorAddress);
     if (distributorFee != 0) {
@@ -703,9 +707,7 @@ contract SplitMain is ISplitMain {
       unchecked {
         // credit keeper with fee
         // overflow should be impossible with validated distributorFee
-        ethBalances[
-          distributorAddress != address(0) ? distributorAddress : msg.sender
-        ] += distributorFeeAmount;
+        ethBalances[distributorAddress] += distributorFeeAmount;
         // given keeper fee, calculate how much to distribute to split recipients
         // underflow should be impossible with validated distributorFee
         amountToSplit -= distributorFeeAmount;
@@ -767,6 +769,10 @@ contract SplitMain is ISplitMain {
       amountToSplit = mainBalance + proxyBalance;
     }
     if (mainBalance > 0) erc20Balances[token][split] = 1;
+    // use msg.sender if distributorAddress == address(0)
+    distributorAddress = distributorAddress != address(0)
+      ? distributorAddress
+      : msg.sender;
     // emit event with gross amountToSplit (before deducting distributorFee)
     emit DistributeERC20(split, token, amountToSplit, distributorAddress);
     if (distributorFee != 0) {
@@ -778,9 +784,7 @@ contract SplitMain is ISplitMain {
       // overflow should be impossible with validated distributorFee
       unchecked {
         // credit keeper with fee
-        erc20Balances[token][
-          distributorAddress != address(0) ? distributorAddress : msg.sender
-        ] += distributorFeeAmount;
+        erc20Balances[token][distributorAddress] += distributorFeeAmount;
         // given keeper fee, calculate how much to distribute to split recipients
         amountToSplit -= distributorFeeAmount;
       }
