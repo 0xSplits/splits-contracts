@@ -122,10 +122,9 @@ export default task(
 
     // maybe make a fn that maps named inputs to their ordering in table?
     const sizeString = size.toString()
-    const gasUsed = [
-      createSplitImmutableReceipt,
-      distributeETHNReceipt,
-    ].map((r) => r.gasUsed)
+    const gasUsed = [createSplitImmutableReceipt, distributeETHNReceipt].map(
+      (r) => r.gasUsed,
+    )
     totalGas.push([sizeString, ...gasUsed.map(formatBN)])
     totalGasUSD.push([
       sizeString,
@@ -151,11 +150,7 @@ export default task(
     ])
   }
 
-  const head = [
-    'Size',
-    'Create Split',
-    'Distribute ETH',
-  ]
+  const head = ['Size', 'Create Split', 'Distribute ETH']
   const alignment = Array(head.length).fill(Align.Right)
 
   const totalTable = getMarkdownTable({

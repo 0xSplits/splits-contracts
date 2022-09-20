@@ -103,12 +103,7 @@ const config: HardhatUserConfig = {
     timeout: 50000,
   },
   dodoc: {
-    exclude: [
-      'Clones',
-      'ReverseRecords',
-      'SafeTransferLib',
-      'ERC20',
-    ],
+    exclude: ['Clones', 'ReverseRecords', 'SafeTransferLib', 'ERC20'],
   },
 }
 
