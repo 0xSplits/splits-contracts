@@ -104,7 +104,7 @@ export default task(
       NO_DISTRIBUTION_FEE,
       controller,
     )
-    const distributeETH1Receipt = await distributeETHTx1.wait()
+    await distributeETHTx1.wait()
 
     await hre.network.provider.send('hardhat_setBalance', [
       splitAddress,
