@@ -22,6 +22,27 @@ import 'tasks/estimateGas'
 import * as dotenv from 'dotenv'
 dotenv.config({ path: '.env.local' })
 
+const {
+  MAINNET_RPC_URL,
+  GOERLI_RPC_URL,
+  POLYGON_RPC_URL,
+  POLYGON_MUMBAI_RPC_URL,
+  OPT_RPC_URL,
+  OPT_GOERLI_RPC_URL,
+  ARB_RPC_URL,
+  ARB_GOERLI_RPC_URL,
+
+  MAINNET_ETHERSCAN_API_KEY,
+  POLYGON_ETHERSCAN_API_KEY,
+  OPT_ETHERSCAN_API_KEY,
+  ARB_ETHERSCAN_API_KEY,
+
+  DEPLOYER_PRIVATE_KEY,
+  REPORT_GAS,
+} = process.env
+
+const accounts = DEPLOYER_PRIVATE_KEY ? [`0x${DEPLOYER_PRIVATE_KEY}`] : 'remote'
+
 const config: HardhatUserConfig = {
   // solidity: '0.8.4',
   solidity: {
@@ -57,101 +78,88 @@ const config: HardhatUserConfig = {
   networks: {
     // ethereum
     mainnet: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
-    },
-    ropsten: {
-      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
-    },
-    rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: MAINNET_RPC_URL,
+      accounts,
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
-    },
-    kovan: {
-      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: GOERLI_RPC_URL,
+      accounts,
     },
     // polygon
     polygon: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: POLYGON_RPC_URL,
+      accounts,
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: POLYGON_MUMBAI_RPC_URL,
+      accounts,
     },
     // optimism
     optimism: {
-      url: ` https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: OPT_RPC_URL,
+      accounts,
     },
-    optimismGoerli: {
-      url: ` https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+    optimisticGoerli: {
+      url: OPT_GOERLI_RPC_URL,
+      accounts,
     },
     // arbitrum
     arbitrum: {
-      url: ` https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: ARB_RPC_URL,
+      accounts,
     },
     arbitrumGoerli: {
-      url: ` https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY
-        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
-        : 'remote',
+      url: ARB_GOERLI_RPC_URL,
+      accounts,
     },
     // localhost
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: MAINNET_RPC_URL,
         blockNumber: 13852105,
       },
       chainId: 1337,
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-    // object structure needs us to upgrade hardhat to ^3.0.0 I think
-    // until then, swap out env as needed
-    // apiKey: {
-    //   // ethereum
-    //   mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
-    //   ropsten: process.env.MAINNET_ETHERSCAN_API_KEY,
-    //   rinkeby: process.env.MAINNET_ETHERSCAN_API_KEY,
-    //   goerli: process.env.MAINNET_ETHERSCAN_API_KEY,
-    //   kovan: process.env.MAINNET_ETHERSCAN_API_KEY,
-    //   // polygon
-    //   polygon: process.env.POLYGON_ETHERSCAN_API_KEY,
-    //   polygonMumbai: process.env.POLYGON_ETHERSCAN_API_KEY,
-    // },
+    apiKey: {
+      // ethereum
+      mainnet: MAINNET_ETHERSCAN_API_KEY,
+      ropsten: MAINNET_ETHERSCAN_API_KEY,
+      rinkeby: MAINNET_ETHERSCAN_API_KEY,
+      goerli: MAINNET_ETHERSCAN_API_KEY,
+      kovan: MAINNET_ETHERSCAN_API_KEY,
+      // polygon
+      polygon: POLYGON_ETHERSCAN_API_KEY,
+      polygonMumbai: POLYGON_ETHERSCAN_API_KEY,
+      // optimism
+      optimisticEthereum: OPT_ETHERSCAN_API_KEY,
+      optimisticGoerli: OPT_ETHERSCAN_API_KEY,
+      // arbitrum
+      arbitrumOne: ARB_ETHERSCAN_API_KEY,
+      arbitrumGoerli: ARB_ETHERSCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: 'optimisticGoerli',
+        chainId: 420,
+        urls: {
+          apiURL: 'https://api-goerli-optimistic.etherscan.io/api',
+          browserURL: 'https://goerli-optimism.etherscan.io/',
+        },
+      },
+      {
+        network: 'arbitrumGoerli',
+        chainId: 421613,
+        urls: {
+          apiURL: 'https://goerli-rollup.arbitrum.io/rpc',
+          browserURL: 'https://goerli-rollup-explorer.arbitrum.io/',
+        },
+      },
+    ],
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS ? true : false,
+    enabled: REPORT_GAS ? true : false,
   },
   mocha: {
     timeout: 50000,
