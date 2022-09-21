@@ -99,6 +99,32 @@ const config: HardhatUserConfig = {
         ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
         : 'remote',
     },
+    // optimism
+    optimism: {
+      url: ` https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    optimismGoerli: {
+      url: ` https://opt-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    // arbitrum
+    arbitrum: {
+      url: ` https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
+    arbitrumGoerli: {
+      url: ` https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
     // localhost
     hardhat: {
       forking: {
@@ -109,7 +135,7 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.POLYGON_ETHERSCAN_API_KEY,
+    apiKey: process.env.ETHERSCAN_API_KEY,
     // object structure needs us to upgrade hardhat to ^3.0.0 I think
     // until then, swap out env as needed
     // apiKey: {
