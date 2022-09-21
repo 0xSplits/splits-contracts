@@ -388,7 +388,7 @@ describe('SplitMain', function () {
       it('Should emit UpdateSplit event with expected split address', async function () {
         await expect(expectCB())
           .to.emit(splitMain, 'UpdateSplit')
-          .withArgs(splitAddress)
+          .withArgs(splitAddress, accounts, percentAllocations, distributorFee)
       })
 
       it('Correctly updates the hash', async function () {
@@ -448,7 +448,13 @@ describe('SplitMain', function () {
       it('Should emit CreateSplit event with expected args', async function () {
         await expect(createSplitTx)
           .to.emit(splitMain, 'CreateSplit')
-          .withArgs(splitAddress)
+          .withArgs(
+            splitAddress,
+            accounts,
+            percentAllocations,
+            distributorFee,
+            controller,
+          )
       })
 
       if (acc === AddressZero)
@@ -768,10 +774,10 @@ describe('SplitMain', function () {
   })
 
   describe('distributeETH', function () {
-    let tx: () => Promise<ContractTransaction>
+    let tx: (distributorAddress_?: string) => Promise<ContractTransaction>
 
     before(() => {
-      tx = () =>
+      tx = (distributorAddress = account) =>
         splitMain
           .connect(signer)
           .distributeETH(
@@ -779,7 +785,7 @@ describe('SplitMain', function () {
             accounts,
             percentAllocations,
             distributorFee,
-            account,
+            distributorAddress,
           )
     })
 
@@ -788,10 +794,18 @@ describe('SplitMain', function () {
         await loadFixture(testSetup__createSplit({ controller: account }))
       })
 
-      it('Should emit DistributeETH event with the expected args', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'DistributeETH')
-          .withArgs(splitAddress, Zero, account)
+      describe('Should emit DistributeETH event with the expected args', function () {
+        it('with a distributoAddress', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
+
+        it('with a blank distributoAddress', async function () {
+          await expect(tx(AddressZero))
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
       })
     })
 
@@ -806,10 +820,18 @@ describe('SplitMain', function () {
         )
       })
 
-      it('Should emit DistributeETH event with the expected args', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'DistributeETH')
-          .withArgs(splitAddress, Zero, account)
+      describe('Should emit DistributeETH event with the expected args', function () {
+        it('with a distributoAddress', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
+
+        it('with a blank distributoAddress', async function () {
+          await expect(tx(AddressZero))
+            .to.emit(splitMain, 'DistributeETH')
+            .withArgs(splitAddress, Zero, account)
+        })
       })
     })
 
@@ -828,10 +850,18 @@ describe('SplitMain', function () {
           )
         })
 
-        it('Should emit DistributeETH event with the expected args', async function () {
-          await expect(tx())
-            .to.emit(splitMain, 'DistributeETH')
-            .withArgs(splitAddress, ethBalance.sub(One), account)
+        describe('Should emit DistributeETH event with the expected args', function () {
+          it('with a distributoAddress', async function () {
+            await expect(tx())
+              .to.emit(splitMain, 'DistributeETH')
+              .withArgs(splitAddress, ethBalance.sub(One), account)
+          })
+
+          it('with a blank distributoAddress', async function () {
+            await expect(tx(AddressZero))
+              .to.emit(splitMain, 'DistributeETH')
+              .withArgs(splitAddress, ethBalance.sub(One), account)
+          })
         })
 
         it("Shouldn't leak funds", async function () {
@@ -1039,7 +1069,7 @@ describe('SplitMain', function () {
   })
 
   describe('distributeERC20', function () {
-    let tx: () => Promise<ContractTransaction>
+    let tx: (distributorAddress_?: string) => Promise<ContractTransaction>
 
     before(() => {
       tx = () =>
@@ -1066,10 +1096,18 @@ describe('SplitMain', function () {
         )
       })
 
-      it('Should emit DistributeERC20 event with the expected args', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'DistributeERC20')
-          .withArgs(splitAddress, erc20Contract.address, Zero, account)
+      describe('Should emit DistributeERC20 event with the expected args', function () {
+        it('with a distributoAddress', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+
+        it('with a blank distributoAddress', async function () {
+          await expect(tx(AddressZero))
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
       })
     })
 
@@ -1084,10 +1122,18 @@ describe('SplitMain', function () {
         )
       })
 
-      it('Should emit DistributeERC20 event with the expected args', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'DistributeERC20')
-          .withArgs(splitAddress, erc20Contract.address, Zero, account)
+      describe('Should emit DistributeERC20 event with the expected args', function () {
+        it('with a distributoAddress', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+
+        it('with a blank distributoAddress', async function () {
+          await expect(tx(AddressZero))
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
       })
     })
 
@@ -1102,10 +1148,18 @@ describe('SplitMain', function () {
         )
       })
 
-      it('Should emit DistributeERC20 event with the expected args', async function () {
-        await expect(tx())
-          .to.emit(splitMain, 'DistributeERC20')
-          .withArgs(splitAddress, erc20Contract.address, Zero, account)
+      describe('Should emit DistributeERC20 event with the expected args', function () {
+        it('with a distributoAddress', async function () {
+          await expect(tx())
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
+
+        it('with a blank distributoAddress', async function () {
+          await expect(tx(AddressZero))
+            .to.emit(splitMain, 'DistributeERC20')
+            .withArgs(splitAddress, erc20Contract.address, Zero, account)
+        })
       })
     })
 
@@ -1125,15 +1179,28 @@ describe('SplitMain', function () {
           )
         })
 
-        it('Should emit DistributeERC20 event with the expected args', async function () {
-          await expect(tx())
-            .to.emit(splitMain, 'DistributeERC20')
-            .withArgs(
-              splitAddress,
-              erc20Contract.address,
-              erc20Balance.sub(Two),
-              account,
-            )
+        describe('Should emit DistributeERC20 event with the expected args', function () {
+          it('with a distributoAddress', async function () {
+            await expect(tx())
+              .to.emit(splitMain, 'DistributeERC20')
+              .withArgs(
+                splitAddress,
+                erc20Contract.address,
+                erc20Balance.sub(Two),
+                account,
+              )
+          })
+
+          it('with a blank distributoAddress', async function () {
+            await expect(tx(AddressZero))
+              .to.emit(splitMain, 'DistributeERC20')
+              .withArgs(
+                splitAddress,
+                erc20Contract.address,
+                erc20Balance.sub(Two),
+                account,
+              )
+          })
         })
 
         it("Shouldn't leak funds", async function () {
