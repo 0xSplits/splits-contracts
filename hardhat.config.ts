@@ -37,11 +37,11 @@ const {
   OPT_ETHERSCAN_API_KEY,
   ARB_ETHERSCAN_API_KEY,
 
-  DEPLOYER_PRIVATE_KEY,
+  PRIVATE_KEY,
   REPORT_GAS,
 } = process.env
 
-const accounts = DEPLOYER_PRIVATE_KEY ? [`0x${DEPLOYER_PRIVATE_KEY}`] : 'remote'
+const accounts = PRIVATE_KEY ? [`0x${PRIVATE_KEY}`] : 'remote'
 
 const config: HardhatUserConfig = {
   // solidity: '0.8.4',
