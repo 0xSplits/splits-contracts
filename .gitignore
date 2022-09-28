@@ -17,10 +17,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
+!.env.local.sample
 
 # vs code
 .vscode
@@ -31,3 +29,4 @@ yarn-error.log*
 /artifacts
 /typechain
 /docs
+
