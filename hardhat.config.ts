@@ -32,10 +32,15 @@ const {
   ARB_RPC_URL,
   ARB_GOERLI_RPC_URL,
 
+  GNO_RPC_URL,
+  GNO_CHIADO_RPC_URL,
+
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
   OPT_ETHERSCAN_API_KEY,
   ARB_ETHERSCAN_API_KEY,
+
+  GNO_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -112,6 +117,15 @@ const config: HardhatUserConfig = {
       url: ARB_GOERLI_RPC_URL,
       accounts,
     },
+    // gnosis
+    gnosis: {
+      url: GNO_RPC_URL,
+      accounts,
+    },
+    gnosisChiado: {
+      url: GNO_CHIADO_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -138,6 +152,9 @@ const config: HardhatUserConfig = {
       // arbitrum
       arbitrumOne: ARB_ETHERSCAN_API_KEY,
       arbitrumGoerli: ARB_ETHERSCAN_API_KEY,
+      // gnosis
+      gnosis: GNO_ETHERSCAN_API_KEY,
+      gnosisChiado: GNO_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
@@ -154,6 +171,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://goerli-rollup.arbitrum.io/rpc',
           browserURL: 'https://goerli-rollup-explorer.arbitrum.io/',
+        },
+      },
+      {
+        network: 'gnosis',
+        chainId: 100,
+        urls: {
+          apiURL: 'https://api.gnosisscan.io/api',
+          browserURL: 'https://gnosisscan.io/',
+        },
+      },
+      {
+        network: 'gnosisChiado',
+        chainId: 10200,
+        urls: {
+          apiURL: 'https://blockscout.com/gnosis/chiado/api',
+          browserURL: 'https://blockscout.com/gnosis/chiado/',
         },
       },
     ],
