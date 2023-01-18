@@ -34,6 +34,8 @@ const {
 
   GNO_RPC_URL,
   GNO_CHIADO_RPC_URL,
+  FTM_RPC_URL,
+  FTM_TEST_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -41,6 +43,7 @@ const {
   ARB_ETHERSCAN_API_KEY,
 
   GNO_ETHERSCAN_API_KEY,
+  FTM_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -126,6 +129,15 @@ const config: HardhatUserConfig = {
       url: GNO_CHIADO_RPC_URL,
       accounts,
     },
+    // ftm
+    ftm: {
+      url: FTM_RPC_URL,
+      accounts,
+    },
+    ftmTestnet: {
+      url: FTM_TEST_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -155,6 +167,9 @@ const config: HardhatUserConfig = {
       // gnosis
       gnosis: GNO_ETHERSCAN_API_KEY,
       gnosisChiado: GNO_ETHERSCAN_API_KEY,
+      // ftm
+      ftm: FTM_ETHERSCAN_API_KEY,
+      ftmTestnet: FTM_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
@@ -187,6 +202,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://blockscout.com/gnosis/chiado/api',
           browserURL: 'https://blockscout.com/gnosis/chiado/',
+        },
+      },
+      {
+        network: 'ftm',
+        chainId: 250,
+        urls: {
+          apiURL: 'https://api.ftmscan.com/api',
+          browserURL: 'https://ftmscan.com',
+        },
+      },
+      {
+        network: 'ftmTestnet',
+        chainId: 4002,
+        urls: {
+          apiURL: 'https://api-testnet.ftmscan.com/api',
+          browserURL: 'https://testnet.ftmscan.com',
         },
       },
     ],
