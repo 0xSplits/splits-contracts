@@ -36,6 +36,8 @@ const {
   GNO_CHIADO_RPC_URL,
   FTM_RPC_URL,
   FTM_TEST_RPC_URL,
+  AVAX_RPC_URL,
+  AVAX_TEST_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -44,6 +46,7 @@ const {
 
   GNO_ETHERSCAN_API_KEY,
   FTM_ETHERSCAN_API_KEY,
+  AVAX_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -138,6 +141,15 @@ const config: HardhatUserConfig = {
       url: FTM_TEST_RPC_URL,
       accounts,
     },
+    // avax
+    avalanche: {
+      url: AVAX_RPC_URL,
+      accounts,
+    },
+    avalancheFujiTestnet: {
+      url: AVAX_TEST_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -170,6 +182,9 @@ const config: HardhatUserConfig = {
       // ftm
       ftm: FTM_ETHERSCAN_API_KEY,
       ftmTestnet: FTM_ETHERSCAN_API_KEY,
+      // avax
+      avalanche: AVAX_ETHERSCAN_API_KEY,
+      avalancheFujiTestnet: AVAX_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
