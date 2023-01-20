@@ -38,6 +38,10 @@ const {
   FTM_TEST_RPC_URL,
   AVAX_RPC_URL,
   AVAX_TEST_RPC_URL,
+  AURORA_RPC_URL,
+  AURORA_TEST_RPC_URL,
+  BSC_RPC_URL,
+  BSC_TEST_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -47,6 +51,8 @@ const {
   GNO_ETHERSCAN_API_KEY,
   FTM_ETHERSCAN_API_KEY,
   AVAX_ETHERSCAN_API_KEY,
+  AURORA_ETHERSCAN_API_KEY,
+  BSC_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -150,6 +156,24 @@ const config: HardhatUserConfig = {
       url: AVAX_TEST_RPC_URL,
       accounts,
     },
+    // aurora
+    aurora: {
+      url: AURORA_RPC_URL,
+      accounts,
+    },
+    auroraTestnet: {
+      url: AURORA_TEST_RPC_URL,
+      accounts,
+    },
+    // bsc
+    bsc: {
+      url: BSC_RPC_URL,
+      accounts,
+    },
+    bscTestnet: {
+      url: BSC_TEST_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -185,6 +209,12 @@ const config: HardhatUserConfig = {
       // avax
       avalanche: AVAX_ETHERSCAN_API_KEY,
       avalancheFujiTestnet: AVAX_ETHERSCAN_API_KEY,
+      // aurora
+      aurora: AURORA_ETHERSCAN_API_KEY,
+      auroraTestnet: AURORA_ETHERSCAN_API_KEY,
+      // bsc
+      bsc: BSC_ETHERSCAN_API_KEY,
+      bscTestnet: BSC_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
