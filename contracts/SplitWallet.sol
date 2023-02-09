@@ -4,6 +4,7 @@ pragma solidity 0.8.4;
 import {ISplitMain} from './interfaces/ISplitMain.sol';
 import {ERC20} from '@rari-capital/solmate/src/tokens/ERC20.sol';
 import {SafeTransferLib} from '@rari-capital/solmate/src/utils/SafeTransferLib.sol';
+import {ERC721} from '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 /**
  * ERRORS
@@ -21,6 +22,7 @@ error Unauthorized();
 contract SplitWallet {
   using SafeTransferLib for address;
   using SafeTransferLib for ERC20;
+  using SafeTransferLib for ERC721;
 
   /**
    * EVENTS
@@ -65,6 +67,25 @@ contract SplitWallet {
    * FUNCTIONS - PUBLIC & EXTERNAL
    */
 
+  /** @notice Handle the receipt of an NFT
+   * @dev The ERC721 smart contract calls this function on the recipient
+   *  after a `safetransfer`.
+   *  Note: the contract address is always the message sender.
+   * @param _operator The operator address
+   * @param _from The sending address
+   * @param _tokenId The NFT identifier which is being transfered
+   * @param _data Additional data with no specified format
+   * @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes"))`
+   */
+  function onERC721Received(
+    address,
+    address,
+    uint256,
+    bytes calldata data
+  ) external pure returns (bytes4) {
+    return 0x150b7a02;
+  }
+
   /** @notice Sends amount `amount` of ETH in proxy to SplitMain
    *  @dev payable reduces gas cost; no vulnerability to accidentally lock
    *  ETH introduced since fn call is restricted to SplitMain
@@ -86,5 +107,18 @@ contract SplitWallet {
     onlySplitMain()
   {
     token.safeTransfer(address(splitMain), amount);
+  }
+
+  /** @notice Withdraw ERC721 `token` with tokenId in `tokenIds` from the split
+   *  @param token Address of the ERC721 token to withdraw
+   *  @param tokenId TokenId of ERC721 to withdraw
+      @param recipient Address of the recipient  
+   */
+  function withdrawERC721(
+    ERC721 token,
+    uint256 tokenId,
+    address recipient
+  ) external onlySplitMain {
+    token.safeTransferFrom(address(this), recipient, tokenId);
   }
 }

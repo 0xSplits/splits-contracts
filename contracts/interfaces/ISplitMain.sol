@@ -2,6 +2,7 @@
 pragma solidity 0.8.4;
 
 import {ERC20} from '@rari-capital/solmate/src/tokens/ERC20.sol';
+import {ERC721} from '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 /**
  * @title ISplitMain
@@ -156,5 +157,31 @@ interface ISplitMain {
     uint256 ethAmount,
     ERC20[] tokens,
     uint256[] tokenAmounts
+  );
+
+  /** @notice emitted after each successful ERC721 deposit
+   *  @param token ERC721 token address
+   *  @param tokenId ERC721 tokenId
+   *  @param sender Address of sender
+   *  @param split Split address where the token was deposited
+   */
+  event DepositERC721(
+    ERC721 token,
+    uint256 tokenId,
+    address sender,
+    address split
+  );
+
+  /** @notice emitted after each successful ERC721 withdrawal
+   *  @param token ERC721 token address
+   *  @param tokenId ERC721 tokenId
+   *  @param sender Address of receiver
+   *  @param split Split address from where the token was withdrawn
+   */
+  event WithdrawERC721(
+    ERC721 token,
+    uint256 tokenId,
+    address reciever,
+    address split
   );
 }
