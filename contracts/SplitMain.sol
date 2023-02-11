@@ -6,6 +6,7 @@ import {SplitWallet} from 'contracts/SplitWallet.sol';
 import {Clones} from 'contracts/libraries/Clones.sol';
 import {ERC20} from '@rari-capital/solmate/src/tokens/ERC20.sol';
 import {SafeTransferLib} from '@rari-capital/solmate/src/utils/SafeTransferLib.sol';
+import {ERC721} from '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 /**
 
@@ -105,6 +106,11 @@ error InvalidSplit__InvalidHash(bytes32 hash);
 /// @param newController Invalid new controller
 error InvalidNewController(address newController);
 
+/// @notice Turnstile interface to register for CSR on canto
+interface Turnstile {
+  function register(address) external returns (uint256);
+}
+
 /**
  * @title SplitMain
  * @author 0xSplits <will@0xSplits.xyz>
@@ -117,6 +123,7 @@ error InvalidNewController(address newController);
 contract SplitMain is ISplitMain {
   using SafeTransferLib for address;
   using SafeTransferLib for ERC20;
+  using SafeTransferLib for ERC721;
 
   /**
    * STRUCTS
@@ -154,6 +161,8 @@ contract SplitMain is ISplitMain {
   mapping(ERC20 => mapping(address => uint256)) internal erc20Balances;
   /// @notice mapping to Split metadata
   mapping(address => Split) internal splits;
+  /// @notice mapping to ERC721 owners
+  mapping(ERC721 => mapping(uint256 => address)) internal erc721owners;
 
   /**
    * MODIFIERS
@@ -845,5 +854,57 @@ contract SplitMain is ISplitMain {
     withdrawn = erc20Balances[token][account] - 1;
     erc20Balances[token][account] = 1;
     token.safeTransfer(account, withdrawn);
+  }
+
+  /** @notice Deposit ERC721 `token` with tokenId in `tokenIds` to split `split`
+      @dev SplitMain must be approved to spend msg.sender's token
+   *  @param token Address of the ERC721 token to deposit
+   *  @param tokenIds List of the ERC721 tokenIds to deposit
+      @param split Address of split to deposit to 
+   */
+  function depositERC721(
+    ERC721 token,
+    uint256[] calldata tokenIds,
+    address split
+  ) external {
+    for (uint256 i; i < tokenIds.length; i++) {
+      uint256 tokenId = tokenIds[i];
+      if (token.ownerOf(tokenId) != msg.sender) revert Unauthorized(msg.sender);
+
+      token.safeTransferFrom(msg.sender, split, tokenId);
+      erc721owners[token][tokenId] = msg.sender;
+
+      emit DepositERC721(token, tokenId, msg.sender, split);
+    }
+  }
+
+  /** @notice Withdraw ERC721 `token` with tokenId in `tokenIds` from  split `split`
+   *  @param token Address of the ERC721 token to withdraw
+   *  @param tokenIds List of the ERC721 tokenIds to withdraw
+      @param split Address of split to withdraw from
+   */
+  function withdrawERC721(
+    ERC721 token,
+    uint256[] calldata tokenIds,
+    address split
+  ) external {
+    for (uint256 i; i < tokenIds.length; i++) {
+      uint256 tokenId = tokenIds[i];
+      if (erc721owners[token][tokenId] != msg.sender)
+        revert Unauthorized(msg.sender);
+
+      delete erc721owners[token][tokenId];
+      SplitWallet(split).withdrawERC721(token, tokenId, msg.sender);
+
+      emit WithdrawERC721(token, tokenId, msg.sender, split);
+    }
+  }
+
+  /** @notice Register the contract with Turnstile
+      @param turnstileAddress Address of the deployed turnstile 
+   */
+  function registerCSR(address turnstileAddress) external {
+    turnstile = Turnstile(turnstileAddress);
+    turnstile.register(msg.sender);
   }
 }
