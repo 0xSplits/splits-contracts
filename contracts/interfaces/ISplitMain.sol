@@ -181,7 +181,7 @@ interface ISplitMain {
   event WithdrawERC721(
     ERC721 token,
     uint256 tokenId,
-    address reciever,
+    address receiver,
     address split
   );
 }
