@@ -44,6 +44,7 @@ const {
   BSC_TEST_RPC_URL,
 
   ZORA_RPC_URL,
+  BASE_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -57,6 +58,7 @@ const {
   BSC_ETHERSCAN_API_KEY,
 
   ZORA_ETHERSCAN_API_KEY,
+  BASE_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -183,6 +185,11 @@ const config: HardhatUserConfig = {
       url: ZORA_RPC_URL,
       accounts,
     },
+    // base
+    base: {
+      url: BASE_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -226,6 +233,8 @@ const config: HardhatUserConfig = {
       bscTestnet: BSC_ETHERSCAN_API_KEY,
       // zora
       zora: ZORA_ETHERSCAN_API_KEY,
+      // base
+      base: BASE_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
@@ -282,6 +291,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://explorer.zora.energy/api',
           browserURL: 'https://explorer.zora.energy',
+        },
+      },
+      {
+        network: 'base',
+        chainId: 8453,
+        urls: {
+          apiURL: 'https://api.basescan.org/api',
+          browserURL: 'https://basescan.org',
         },
       },
     ],
