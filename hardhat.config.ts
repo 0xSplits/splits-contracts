@@ -44,7 +44,9 @@ const {
   BSC_TEST_RPC_URL,
 
   ZORA_RPC_URL,
+  ZORA_GOERLI_RPC_URL,
   BASE_RPC_URL,
+  BASE_GOERLI_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -185,9 +187,17 @@ const config: HardhatUserConfig = {
       url: ZORA_RPC_URL,
       accounts,
     },
+    zoraGoerli: {
+      url: ZORA_GOERLI_RPC_URL,
+      accounts,
+    },
     // base
     base: {
       url: BASE_RPC_URL,
+      accounts,
+    },
+    baseGoerli: {
+      url: BASE_GOERLI_RPC_URL,
       accounts,
     },
     // localhost
@@ -233,8 +243,10 @@ const config: HardhatUserConfig = {
       bscTestnet: BSC_ETHERSCAN_API_KEY,
       // zora
       zora: ZORA_ETHERSCAN_API_KEY,
+      zoraGoerli: ZORA_ETHERSCAN_API_KEY,
       // base
       base: BASE_ETHERSCAN_API_KEY,
+      baseGoerli: BASE_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
@@ -294,11 +306,27 @@ const config: HardhatUserConfig = {
         },
       },
       {
+        network: 'zoraGoerli',
+        chainId: 999,
+        urls: {
+          apiURL: 'https://testnet.explorer.zora.energy/api',
+          browserURL: 'https://testnet.explorer.zora.energy',
+        },
+      },
+      {
         network: 'base',
         chainId: 8453,
         urls: {
           apiURL: 'https://api.basescan.org/api',
           browserURL: 'https://basescan.org',
+        },
+      },
+      {
+        network: 'baseGoerli',
+        chainId: 84531,
+        urls: {
+          apiURL: 'https://api-goerli.basescan.org/api',
+          browserURL: 'https://goerli.basescan.org',
         },
       },
     ],
