@@ -92,6 +92,12 @@ const config: HardhatUserConfig = {
       },
       chainId: 1337,
     },
+    holesky: {
+      url: 'https://rpc.holesky.ethpandaops.io',
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
