@@ -92,6 +92,12 @@ const config: HardhatUserConfig = {
       },
       chainId: 1337,
     },
+    sepolia: {
+      url: 'https://rpc.sepolia.org',
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
