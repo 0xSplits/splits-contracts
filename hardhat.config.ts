@@ -47,6 +47,7 @@ const {
   ZORA_GOERLI_RPC_URL,
   BASE_RPC_URL,
   BASE_GOERLI_RPC_URL,
+  BASE_SEPOLIA_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -200,6 +201,10 @@ const config: HardhatUserConfig = {
       url: BASE_GOERLI_RPC_URL,
       accounts,
     },
+    baseSepolia: {
+      url: BASE_SEPOLIA_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -247,6 +252,7 @@ const config: HardhatUserConfig = {
       // base
       base: BASE_ETHERSCAN_API_KEY,
       baseGoerli: BASE_ETHERSCAN_API_KEY,
+      baseSepolia: BASE_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
@@ -327,6 +333,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api-goerli.basescan.org/api',
           browserURL: 'https://goerli.basescan.org',
+        },
+      },
+      {
+        network: 'baseSepolia',
+        chainId: 84532,
+        urls: {
+          apiURL: 'https://api-sepolia.basescan.org/api',
+          browserURL: 'https://sepolia.basescan.org',
         },
       },
     ],
