@@ -29,6 +29,7 @@ const {
   POLYGON_MUMBAI_RPC_URL,
   OPT_RPC_URL,
   OPT_GOERLI_RPC_URL,
+  OPT_SEPOLIA_RPC_URL,
   ARB_RPC_URL,
   ARB_GOERLI_RPC_URL,
 
@@ -103,6 +104,10 @@ const config: HardhatUserConfig = {
       url: OPT_GOERLI_RPC_URL,
       accounts,
     },
+    optimisticSepolia: {
+      url: OPT_SEPOLIA_RPC_URL,
+      accounts,
+    },
     // arbitrum
     arbitrum: {
       url: ARB_RPC_URL,
@@ -135,6 +140,7 @@ const config: HardhatUserConfig = {
       // optimism
       optimisticEthereum: OPT_ETHERSCAN_API_KEY,
       optimisticGoerli: OPT_ETHERSCAN_API_KEY,
+      optimisticSepolia: OPT_ETHERSCAN_API_KEY,
       // arbitrum
       arbitrumOne: ARB_ETHERSCAN_API_KEY,
       arbitrumGoerli: ARB_ETHERSCAN_API_KEY,
@@ -154,6 +160,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://goerli-rollup.arbitrum.io/rpc',
           browserURL: 'https://goerli-rollup-explorer.arbitrum.io/',
+        },
+      },
+      {
+        network: 'optimisticSepolia',
+        chainId: 11155420,
+        urls: {
+          apiURL: 'https://api-sepolia-optimism.etherscan.io/api',
+          browserURL: 'https://sepolia-optimism.etherscan.io/',
         },
       },
     ],
