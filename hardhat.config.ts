@@ -44,6 +44,7 @@ const {
   BSC_TEST_RPC_URL,
 
   ZORA_RPC_URL,
+  ZORA_SEPOLIA_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -183,6 +184,10 @@ const config: HardhatUserConfig = {
       url: ZORA_RPC_URL,
       accounts,
     },
+    zoraSepolia: {
+      url: ZORA_SEPOLIA_RPC_URL,
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -226,6 +231,7 @@ const config: HardhatUserConfig = {
       bscTestnet: BSC_ETHERSCAN_API_KEY,
       // zora
       zora: ZORA_ETHERSCAN_API_KEY,
+      zoraSepolia: 'ZORA_ETHERSCAN_API_KEY',
     },
     customChains: [
       {
@@ -282,6 +288,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://explorer.zora.energy/api',
           browserURL: 'https://explorer.zora.energy',
+        },
+      },
+      {
+        network: 'zoraSepolia',
+        chainId: 999999999,
+        urls: {
+          apiURL: 'https://sepolia.explorer.zora.energy/api',
+          browserURL: 'https://sepolia.explorer.zora.energy',
         },
       },
     ],
