@@ -31,6 +31,7 @@ const {
   OPT_GOERLI_RPC_URL,
   ARB_RPC_URL,
   ARB_GOERLI_RPC_URL,
+  HOLESKY_RPC_URL,
 
   MAINNET_ETHERSCAN_API_KEY,
   POLYGON_ETHERSCAN_API_KEY,
@@ -120,6 +121,12 @@ const config: HardhatUserConfig = {
       },
       chainId: 1337,
     },
+    holesky: {
+      url: HOLESKY_RPC_URL,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
   },
   etherscan: {
     apiKey: {
@@ -129,6 +136,7 @@ const config: HardhatUserConfig = {
       rinkeby: MAINNET_ETHERSCAN_API_KEY,
       goerli: MAINNET_ETHERSCAN_API_KEY,
       kovan: MAINNET_ETHERSCAN_API_KEY,
+      holesky: MAINNET_ETHERSCAN_API_KEY,
       // polygon
       polygon: POLYGON_ETHERSCAN_API_KEY,
       polygonMumbai: POLYGON_ETHERSCAN_API_KEY,
@@ -156,6 +164,14 @@ const config: HardhatUserConfig = {
           browserURL: 'https://goerli-rollup-explorer.arbitrum.io/',
         },
       },
+      {
+        network: 'holesky',
+        chainId: 17000,
+        urls: {
+          apiURL: 'https://api-holesky.etherscan.io/api',
+          browserURL: 'https://holesky.etherscan.io/',
+        },
+      },
     ],
   },
   gasReporter: {
@@ -166,6 +182,9 @@ const config: HardhatUserConfig = {
   },
   dodoc: {
     exclude: ['Clones', 'ReverseRecords', 'SafeTransferLib', 'ERC20'],
+  },
+  sourcify: {
+    enabled: true,
   },
 }
 
