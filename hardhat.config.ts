@@ -85,6 +85,24 @@ const config: HardhatUserConfig = {
         ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
         : 'remote',
     },
+    energiMainnet: {
+      chainId: 39797,
+      url: String(process.env.RPC_URL || 'https://nodeapi.energi.network'),
+      gas: 1000000,
+      gasPrice: 20000000000, // 20 GWei
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+      ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+      : 'remote',
+    },
+    energiTestnet: {
+      chainId: 49797,
+      url: String(process.env.RPC_URL || 'https://nodeapi.test.energi.network'),
+      gas: 1000000,
+      gasPrice: 20000000000, // 20 GWei
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+      ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+      : 'remote',
+    },
     hardhat: {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -95,6 +113,24 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+    customChains: [
+      {
+        network: 'energiMainnet',
+        chainId: 39797,
+        urls: {
+          apiURL: 'https://explorer.energi.network/api',
+          browserURL: 'https://explorer.energi.network'
+        },
+      },
+      {
+        network: 'energiTestnet',
+        chainId: 49797,
+        urls: {
+          apiURL: 'https://explorer.test.energi.network/api',
+          browserURL: 'https://explorer.test.energi.network'
+        },
+      },
+    ]
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
