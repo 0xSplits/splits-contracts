@@ -113,24 +113,6 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
-    customChains: [
-      {
-        network: 'energiMainnet',
-        chainId: 39797,
-        urls: {
-          apiURL: 'https://explorer.energi.network/api',
-          browserURL: 'https://explorer.energi.network'
-        },
-      },
-      {
-        network: 'energiTestnet',
-        chainId: 49797,
-        urls: {
-          apiURL: 'https://explorer.test.energi.network/api',
-          browserURL: 'https://explorer.test.energi.network'
-        },
-      },
-    ]
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
