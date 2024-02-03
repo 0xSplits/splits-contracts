@@ -62,6 +62,7 @@ const {
 
   ZORA_ETHERSCAN_API_KEY,
   BASE_ETHERSCAN_API_KEY,
+  BLAST_ETHERSCAN_API_KEY,
 
   PRIVATE_KEY,
   REPORT_GAS,
@@ -205,6 +206,10 @@ const config: HardhatUserConfig = {
       url: BASE_SEPOLIA_RPC_URL,
       accounts,
     },
+    blastSepolia: {
+      url: 'https://sepolia.blast.io',
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -253,6 +258,7 @@ const config: HardhatUserConfig = {
       base: BASE_ETHERSCAN_API_KEY,
       baseGoerli: BASE_ETHERSCAN_API_KEY,
       baseSepolia: BASE_ETHERSCAN_API_KEY,
+      blastSepolia: 'blast_sepolia',
     },
     customChains: [
       {
@@ -341,6 +347,15 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api-sepolia.basescan.org/api',
           browserURL: 'https://sepolia.basescan.org',
+        },
+      },
+      {
+        network: 'blastSepolia',
+        chainId: 168587773,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan',
+          browserURL: 'https://testnet.blastscan.io',
         },
       },
     ],
