@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.4;
 
-import {IBlast, IERC20Rebasing, YieldMode} from 'contracts/interfaces/IBlast.sol';
+import {IBlast} from 'contracts/interfaces/IBlast.sol';
 import {ISplitMain} from './interfaces/ISplitMain.sol';
 import {ERC20} from '@rari-capital/solmate/src/tokens/ERC20.sol';
 import {SafeTransferLib} from '@rari-capital/solmate/src/utils/SafeTransferLib.sol';
@@ -46,12 +46,6 @@ contract SplitWallet {
 
   /// @notice blast yield contract.
   IBlast public constant BLAST_YIELD = IBlast(0x4300000000000000000000000000000000000002);
-
-  /// @notice blast USDB address.
-  IERC20Rebasing public constant USDB = IERC20Rebasing(0x4300000000000000000000000000000000000003);
-
-  /// @notice blast WETH address.
-  IERC20Rebasing public constant WETH = IERC20Rebasing(0x4300000000000000000000000000000000000004);
 
   /// @notice blast gas fees recipient.
   address public immutable SPLIT_DEPLOYER;
