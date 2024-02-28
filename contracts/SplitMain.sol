@@ -152,7 +152,7 @@ contract SplitMain is ISplitMain {
   /// @notice blast WETH address.
   IERC20Rebasing public constant WETH = IERC20Rebasing(0x4300000000000000000000000000000000000004);
   /// @notice blast gas fees and yield recipient.
-  address public immutable SPLIT_DEPLOYER;
+  address public immutable SPLITS_DEPLOYER;
 
   /**
    * STORAGE - VARIABLES - PRIVATE & INTERNAL
@@ -241,13 +241,13 @@ contract SplitMain is ISplitMain {
   constructor() {
     walletImplementation = address(new SplitWallet());
 
-    SPLIT_DEPLOYER = tx.origin;
+    SPLITS_DEPLOYER = msg.sender;
     // configure gas fees as claimable
     BLAST_YIELD.configureClaimableGas();
     // configure eth yield as claimable
     BLAST_YIELD.configureClaimableYield();
     // set governor to deployer
-    BLAST_YIELD.configureGovernor(tx.origin);
+    BLAST_YIELD.configureGovernor(msg.sender);
     // configure weth and usdb yield as claimable
     USDB.configure((YieldMode.CLAIMABLE));
     WETH.configure((YieldMode.CLAIMABLE));
@@ -567,7 +567,7 @@ contract SplitMain is ISplitMain {
   * @param _amount amount of yield to claim.
   */
   function claimYield(address _token, uint256 _amount) external {
-    IERC20Rebasing(_token).claim(SPLIT_DEPLOYER, _amount);
+    IERC20Rebasing(_token).claim(SPLITS_DEPLOYER, _amount);
   }
 
   /**

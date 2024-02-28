@@ -48,7 +48,7 @@ contract SplitWallet {
   IBlast public constant BLAST_YIELD = IBlast(0x4300000000000000000000000000000000000002);
 
   /// @notice blast gas fees recipient.
-  address public immutable SPLIT_DEPLOYER;
+  address public immutable SPLITS_DEPLOYER;
 
   /**
    * MODIFIERS
@@ -66,7 +66,7 @@ contract SplitWallet {
 
   constructor() {
     splitMain = ISplitMain(msg.sender);
-    SPLIT_DEPLOYER = tx.origin;
+    SPLITS_DEPLOYER = tx.origin;
   }
 
   /**
@@ -103,6 +103,6 @@ contract SplitWallet {
 
   /// @notice claim gas fees earned by this wallet and send it to split deployer.
   function claimGasFees() external {
-    BLAST_YIELD.claimMaxGas(address(this), SPLIT_DEPLOYER);
+    BLAST_YIELD.claimMaxGas(address(this), SPLITS_DEPLOYER);
   }
 }
