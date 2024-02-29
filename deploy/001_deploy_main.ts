@@ -36,6 +36,7 @@ enum ChainId {
   Localhost = 1337,
   Hardhat = 31337,
   BlastSepolia = 168587773,
+  Blast = 81457,
 }
 
 const CHAIN_NAMES = {
@@ -70,6 +71,7 @@ const CHAIN_NAMES = {
   [ChainId.Localhost]: 'Localhost',
   [ChainId.Hardhat]: 'Hardhat',
   [ChainId.BlastSepolia]: 'Blast-Sepolia',
+  [ChainId.Blast]: 'Blast',
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

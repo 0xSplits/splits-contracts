@@ -210,6 +210,10 @@ const config: HardhatUserConfig = {
       url: 'https://sepolia.blast.io',
       accounts,
     },
+    blast: {
+      url: 'https://enterprise.onerpc.com/blast?apiKey=k1qLxkpszfUwR5AWKJLR1G2mi4rMdJ33',
+      accounts,
+    },
     // localhost
     hardhat: {
       forking: {
@@ -259,6 +263,7 @@ const config: HardhatUserConfig = {
       baseGoerli: BASE_ETHERSCAN_API_KEY,
       baseSepolia: BASE_ETHERSCAN_API_KEY,
       blastSepolia: 'blast_sepolia',
+      blast: 'blast_mainnet',
     },
     customChains: [
       {
@@ -356,6 +361,14 @@ const config: HardhatUserConfig = {
           apiURL:
             'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan',
           browserURL: 'https://testnet.blastscan.io',
+        },
+      },
+      {
+        network: 'blastMainnet',
+        chainId: 81457,
+        urls: {
+          apiURL: 'https://81457.routescan.io/etherscan',
+          browserURL: 'https://81457.routescan.io/',
         },
       },
     ],
