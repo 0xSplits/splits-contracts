@@ -196,6 +196,12 @@ const config: HardhatUserConfig = {
       },
       chainId: 1337,
     },
+    sepolia: {
+      url: 'https://rpc.sepolia.org',
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`]
+        : 'remote',
+    },
   },
   etherscan: {
     apiKey: {
@@ -232,6 +238,7 @@ const config: HardhatUserConfig = {
       // zora
       zora: ZORA_ETHERSCAN_API_KEY,
       zoraSepolia: 'ZORA_ETHERSCAN_API_KEY',
+      sepolia: MAINNET_ETHERSCAN_API_KEY,
     },
     customChains: [
       {
