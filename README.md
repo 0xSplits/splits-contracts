@@ -1,5 +1,8 @@
 # splits-contracts
 
+These are the legacy contracts for the [Splits protocol](https://splits.org/protocol).
+V2 contracts can be found at [github.com/0xSplits/splits-contracts-monorepo](https://github.com/0xSplits/splits-contracts-monorepo)
+
 [![codecov](https://codecov.io/gh/0xSplits/splits-contracts/branch/main/graph/badge.svg?token=ERFQOFF0L7)](https://codecov.io/gh/0xSplits/splits-contracts)
 
 ## Run locally
